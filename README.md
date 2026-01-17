@@ -38,33 +38,35 @@
 ## 기술 스택
 
 ### Backend
-```
-Java 17
-Spring Boot 3.2.x
-Spring Security 6.x
-Spring Data JPA
-Thymeleaf + Layout Dialect
-```
+| 기술 | 버전 | 설명 |
+|------|------|------|
+| Java | 21 | 프로그래밍 언어 |
+| Spring Boot | 3.4.1 | 웹 프레임워크 |
+| Spring Security | 6.x | 인증/인가 |
+| Spring Data JPA | - | ORM |
+| Thymeleaf | - | 템플릿 엔진 |
+| Thymeleaf Layout Dialect | - | 레이아웃 템플릿 |
+| Lombok | - | 보일러플레이트 코드 제거 |
 
 ### Database
-```
-H2 Database (개발)
-MySQL 8.x (운영)
-```
+| 기술 | 용도 |
+|------|------|
+| H2 Database | 개발/테스트 환경 |
+| MySQL | 운영 환경 |
 
 ### Frontend
-```
-HTML5 / CSS3
-JavaScript (Vanilla)
-Thymeleaf 템플릿 엔진
-```
+| 기술 | 설명 |
+|------|------|
+| HTML5 / CSS3 | 마크업 & 스타일링 |
+| JavaScript | 클라이언트 스크립트 |
+| Thymeleaf | 서버사이드 템플릿 |
 
 ### Build & Tools
-```
-Gradle
-Lombok
-IntelliJ IDEA
-```
+| 도구 | 설명 |
+|------|------|
+| Gradle | 빌드 도구 |
+| IntelliJ IDEA | IDE |
+| Git | 버전 관리 |
 
 ---
 
@@ -313,7 +315,7 @@ src/
 ## 실행 방법
 
 ### 요구사항
-- Java 17+
+- Java 21+
 - Gradle 8.x
 
 ### 개발 환경 실행
