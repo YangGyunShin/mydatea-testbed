@@ -43,8 +43,9 @@
 |------|------|------|
 | Java | 21 | 프로그래밍 언어 |
 | Spring Boot | 3.4.1 | 웹 프레임워크 |
-| Spring Security | 6.x | 인증/인가 |
+| Spring Security | 6.x | 인증/인가 (Form Login 방식) |
 | Spring Data JPA | - | ORM |
+| Spring Validation | - | Bean Validation (커스텀 어노테이션 포함) |
 | Thymeleaf | - | 템플릿 엔진 |
 | Thymeleaf Layout Dialect | - | 레이아웃 템플릿 |
 | Lombok | - | 보일러플레이트 코드 제거 |
@@ -81,6 +82,8 @@
 | **No Setter** | 모든 클래스에서 Setter 사용 금지, `@Builder` 패턴 사용 |
 | **Use Mapper** | DTO ↔ Entity 변환은 별도 Mapper 클래스 사용 |
 | **Use VO** | 핵심 값 객체(Email, Password, Phone)는 VO로 래핑하여 타입 안전성 확보 |
+| **Domain Logic in Entity/VO** | 도메인 규칙은 Entity와 VO에 캡슐화 (예: 이메일 형식 검증은 VO에서) |
+| **Use Case in Service** | Service는 유스케이스 조합만 담당, 인프라 의존성 조율 |
 
 ### 파일 네이밍 규칙
 
@@ -91,11 +94,21 @@
 | DTO (Request) | `RequestDto` | `MemberSignupRequestDto.java` |
 | DTO (Response) | `ResponseDto` | `MemberResponseDto.java` |
 | Mapper | `Mapper` | `MemberMapper.java` |
+| Service Interface | `Service` | `MemberService.java` |
+| Service 구현체 | `ServiceImpl` | `MemberServiceImpl.java` |
+
+### Lombok 어노테이션 패턴
+
+| 클래스 종류 | 어노테이션 | 이유 |
+|------------|-----------|------|
+| **Entity** | `@Getter @NoArgsConstructor(access = PROTECTED)` + 생성자에 `@Builder` | id, 시간 필드 제외 |
+| **VO** | `@Getter @NoArgsConstructor(access = PROTECTED)` + 생성자에 `@Builder` | 검증 로직 포함 |
+| **ResponseDto** | `@Getter @Builder` | Mapper에서 Builder로만 생성 |
+| **RequestDto** | `@Getter @Builder @NoArgsConstructor @AllArgsConstructor` | Spring MVC 바인딩 + Builder |
 
 ---
 
 ## 시스템 아키텍처
-
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                          Client (Browser)                        │
@@ -106,22 +119,32 @@
 │                      Spring Boot Application                     │
 │  ┌───────────────────────────────────────────────────────────┐  │
 │  │                    Presentation Layer                      │  │
-│  │         Controller, DTO, Mapper, Thymeleaf Templates       │  │
+│  │              Controller, Thymeleaf Templates               │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                              │                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │                     Validation Layer                       │  │
+│  │      DTO (@Valid), Custom Annotation (@PasswordMatching)   │  │
 │  └───────────────────────────────────────────────────────────┘  │
 │                              │                                   │
 │  ┌───────────────────────────────────────────────────────────┐  │
 │  │                     Security Layer                         │  │
-│  │            Spring Security, UserDetails, Handler           │  │
+│  │     Spring Security, CustomUserDetails, Form Login         │  │
 │  └───────────────────────────────────────────────────────────┘  │
 │                              │                                   │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │                     Business Layer                         │  │
-│  │                    Service Classes                         │  │
+│  │                   Application Layer                        │  │
+│  │              Service (Use Case), Mapper                    │  │
 │  └───────────────────────────────────────────────────────────┘  │
 │                              │                                   │
 │  ┌───────────────────────────────────────────────────────────┐  │
 │  │                      Domain Layer                          │  │
-│  │                  Entity, VO, Repository                    │  │
+│  │            Entity, VO (핵심 비즈니스 규칙 포함)              │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                              │                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │                  Infrastructure Layer                      │  │
+│  │                       Repository                           │  │
 │  └───────────────────────────────────────────────────────────┘  │
 └─────────────────────────────┬───────────────────────────────────┘
                               │ JDBC
@@ -131,76 +154,101 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### 레이어별 책임
+
+| Layer | 책임 | 주요 컴포넌트 |
+|-------|------|--------------|
+| **Presentation** | HTTP 요청/응답 처리, 뷰 렌더링 | Controller, Thymeleaf |
+| **Validation** | 입력값 검증 | DTO, Custom Annotation |
+| **Security** | 인증/인가, 세션 관리 | Spring Security, UserDetails |
+| **Application** | 유스케이스 구현, 객체 변환 | Service, Mapper |
+| **Domain** | 핵심 비즈니스 규칙 | Entity, VO |
+| **Infrastructure** | 데이터 영속성 | Repository |
+
 ---
 
 ## 프로젝트 구조
-
 ```
 src/main/java/com/mydata/mydatatestbed/
 ├── MydataTestbedApplication.java
 │
-├── config/                          # 설정
-│   ├── SecurityConfig.java
-│   ├── WebConfig.java
-│   └── AuditConfig.java
+├── config/                              # 설정
+│   ├── AuditConfig.java                 # JPA Auditing 설정
+│   └── SecurityConfig.java              # Spring Security 설정
 │
-├── controller/                      # 컨트롤러
-│   ├── MainController.java
-│   ├── IntroController.java
-│   ├── ApiGuideController.java
-│   ├── TestbedController.java
-│   ├── ConformanceController.java
-│   ├── SupportController.java
-│   └── MemberController.java
+├── controller/                          # 컨트롤러
+│   └── MainController.java
 │
-├── domain/                          # 도메인
-│   ├── BaseTimeEntity.java
-│   ├── Member.java
-│   ├── Notice.java
-│   ├── Faq.java
-│   ├── Inquiry.java
-│   ├── Resource.java
-│   ├── Board.java
-│   ├── vo/                          # Value Objects
-│   │   ├── EmailVo.java
-│   │   ├── PasswordVo.java
-│   │   └── PhoneVo.java
-│   └── enums/
-│       ├── MemberRole.java
-│       ├── FaqCategory.java
-│       └── InquiryStatus.java
+├── entity/                              # Entity
+│   ├── BaseTimeEntity.java              # 공통 시간 필드 (createdAt, updatedAt)
+│   ├── Member.java                      # 회원 Entity
+│   └── Enum/
+│       └── MemberRole.java              # 회원 권한 Enum
 │
-├── repository/                      # 리포지토리
+├── vo/                                  # Value Objects
+│   ├── EmailVo.java                     # 이메일 VO (형식 검증 포함)
+│   ├── PasswordVo.java                  # 비밀번호 VO
+│   └── PhoneVo.java                     # 전화번호 VO (형식 검증 포함)
 │
-├── dto/                             # DTO
-│   ├── member/
-│   ├── notice/
-│   ├── faq/
-│   ├── inquiry/
-│   ├── board/
-│   └── common/
+├── repository/                          # Repository
+│   └── MemberRepository.java
 │
-├── mapper/                          # Mapper
-│   ├── MemberMapper.java
-│   ├── NoticeMapper.java
-│   └── ...
+├── dto/                                 # DTO
+│   └── member/
+│       ├── MemberSignupRequestDto.java  # 회원가입 요청
+│       └── MemberResponseDto.java       # 회원 응답
 │
-├── service/                         # 서비스
+├── mapper/                              # Mapper (DTO ↔ Entity 변환)
+│   └── MemberMapper.java
 │
-├── security/                        # 보안
-│   ├── CustomUserDetails.java
-│   ├── CustomUserDetailsService.java
-│   └── LoginFailureHandler.java
+├── service/                             # Service
+│   ├── MemberService.java               # 인터페이스
+│   └── impl/
+│       └── MemberServiceImpl.java       # 구현체
 │
-└── exception/                       # 예외
-    ├── GlobalExceptionHandler.java
-    └── ...
+├── security/                            # Spring Security
+│   ├── CustomUserDetails.java           # UserDetails 구현
+│   └── CustomUserDetailsService.java    # UserDetailsService 구현
+│
+└── validation/                          # 커스텀 Validation
+    ├── PasswordMatching.java            # 비밀번호 일치 검증 어노테이션
+    └── PasswordMatchingValidator.java   # 검증 로직
+```
+
+### 프론트엔드 구조
+```
+src/main/resources/
+├── templates/
+│   ├── layout/
+│   │   ├── default-layout.html          # 기본 레이아웃
+│   │   ├── header.html                  # 헤더
+│   │   ├── footer.html                  # 푸터
+│   │   └── sidebar.html                 # 사이드바
+│   ├── fragments/
+│   │   ├── breadcrumb.html              # 브레드크럼
+│   │   ├── pagination.html              # 페이지네이션
+│   │   └── page-banner.html             # 페이지 배너
+│   ├── main/
+│   │   └── index.html                   # 메인 페이지
+│   └── error/
+│
+└── static/
+    ├── css/
+    │   ├── common.css                   # 공통 스타일
+    │   ├── header.css                   # 헤더 스타일
+    │   ├── footer.css                   # 푸터 스타일
+    │   ├── sidebar.css                  # 사이드바 스타일
+    │   ├── main.css                     # 메인 페이지 스타일
+    │   ├── sub-page.css                 # 서브 페이지 스타일
+    │   └── form.css                     # 폼 스타일
+    └── js/
+        ├── common.js                    # 공통 스크립트
+        └── main.js                      # 메인 페이지 스크립트
 ```
 
 ---
 
 ## 메뉴 구조
-
 ```
 📁 마이데이터 테스트베드
 │
@@ -239,7 +287,6 @@ src/main/java/com/mydata/mydatatestbed/
 ---
 
 ## ERD
-
 ```
 ┌──────────────────┐       ┌──────────────────┐
 │     members      │       │     notices      │
@@ -325,11 +372,10 @@ src/main/java/com/mydata/mydatatestbed/
 - Gradle 8.x
 
 ### 개발 환경 실행
-
 ```bash
 # 1. 프로젝트 클론
-git clone https://github.com/YangGyunShin/mydatea-testbed.git
-cd mydatea-testbed
+git clone https://github.com/YangGyunShin/mydata-testbed.git
+cd mydata-testbed
 
 # 2. 애플리케이션 실행
 ./gradlew bootRun
@@ -350,39 +396,66 @@ Password: (비워두기)
 
 ## 개발 로드맵
 
-### Phase 1: 기본 구조 (1-2주)
+### Phase 1: 기본 구조 ✅ 완료
 - [x] 프로젝트 생성 및 의존성 설정
 - [x] 공통 레이아웃 (Header, Footer, Sidebar)
-- [x] 메인 페이지 UI
-- [ ] Config 설정 (Security, Web)
-- [ ] 정적 페이지 (소개 페이지들)
+- [x] CSS (common, header, footer, sidebar, main, sub-page, form)
+- [x] JS (common.js, main.js)
+- [x] 메인 페이지 템플릿 (index.html)
+- [x] Config 설정 (SecurityConfig, AuditConfig)
+- [x] MainController
 
-### Phase 2: 회원 기능 (1-2주)
-- [ ] VO (EmailVo, PasswordVo, PhoneVo)
-- [ ] Member Entity 및 Repository
-- [ ] Spring Security 설정
-- [ ] 로그인/로그아웃
-- [ ] 회원가입 (4단계)
-- [ ] 이메일 인증
+### Phase 2: 회원 기능 ✅ 완료
+- [x] VO (EmailVo, PasswordVo, PhoneVo) - 도메인 규칙 검증 포함
+- [x] Entity (BaseTimeEntity, Member)
+- [x] Enum (MemberRole)
+- [x] Repository (MemberRepository)
+- [x] DTO (MemberSignupRequestDto, MemberResponseDto)
+- [x] Custom Validation (@PasswordMatching)
+- [x] Mapper (MemberMapper)
+- [x] Service (MemberService, MemberServiceImpl)
+- [x] Security (CustomUserDetails, CustomUserDetailsService)
+- [x] SecurityConfig 수정 (PasswordEncoder, UserDetailsService 연동)
+- [ ] MemberController (회원가입/로그인 페이지)
+- [ ] 회원가입 템플릿 (step1~4)
+- [ ] 로그인 템플릿
+- [ ] 이메일 인증 기능
 
-### Phase 3: 게시판 기능 (1-2주)
-- [ ] 공지사항 목록/상세
-- [ ] FAQ
-- [ ] 문의하기
-- [ ] 자료실
-- [ ] 자유게시판
+### Phase 3: 게시판 기능 (진행 예정)
+- [ ] Entity (Notice, Faq, Inquiry, Resource, Board)
+- [ ] Enum (FaqCategory, InquiryStatus)
+- [ ] Repository
+- [ ] DTO, Mapper, Service
+- [ ] Controller
+- [ ] 템플릿 (목록, 상세, 작성 페이지)
 
-### Phase 4: 핵심 기능 (2-3주)
+### Phase 4: 핵심 기능
 - [ ] API 가이드 페이지
 - [ ] 테스트베드 기능
 - [ ] 적합성 심사 기능
 
-### Phase 5: 완성도 높이기 (1주)
+### Phase 5: 완성도 높이기
 - [ ] 검색 기능
 - [ ] 페이징
 - [ ] 파일 첨부/다운로드
-- [ ] 반응형 디자인
-- [ ] 에러 페이지
+- [ ] 반응형 디자인 점검
+- [ ] 에러 페이지 (404, 500)
+
+---
+
+## 주요 설계 결정 사항
+
+### 1. VO에 검증 로직을 넣는 이유
+VO의 validate 메서드는 "값이 무엇인지"를 정의하는 도메인 규칙입니다. 어떤 애플리케이션에서 사용하든 이메일 형식은 동일하게 검증되어야 합니다. VO에서 검증하면 **항상 유효한 도메인 모델(Always Valid Domain Model)** 을 보장할 수 있습니다.
+
+### 2. Entity에 비즈니스 메서드를 넣는 이유
+`member.verifyEmail()` 같은 메서드는 "회원의 이메일이 인증되었음을 표시한다"는 도메인 규칙입니다. 이를 Service에서 직접 필드를 조작하면 Setter가 필요해지고 캡슐화가 깨집니다. Entity가 자신의 상태를 스스로 관리하도록 합니다.
+
+### 3. 커스텀 Validation 어노테이션을 만드는 이유
+비밀번호 일치 검증은 회원가입뿐 아니라 비밀번호 변경, 재설정 등에서도 재사용됩니다. `@PasswordMatching` 어노테이션으로 만들면 `@Valid` 하나로 모든 검증이 자동 실행되고, Service가 깔끔해집니다.
+
+### 4. Form Login을 사용하는 이유
+Spring Security의 Form Login을 사용하면 로그인/로그아웃 로직을 직접 구현할 필요가 없습니다. `CustomUserDetailsService`만 구현하면 Spring Security가 나머지(비밀번호 비교, 세션 관리 등)를 자동 처리합니다.
 
 ---
 
