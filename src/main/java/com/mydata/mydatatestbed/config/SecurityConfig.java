@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/intro/**", "/api-guide/**", "/support/**").permitAll()
-                        .requestMatchers("/member/login", "/member/signup/**").permitAll()
+                        .requestMatchers("/member/login", "/member/signup/**", "/member/verify-email", "/member/resend-verification").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )

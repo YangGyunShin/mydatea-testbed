@@ -288,16 +288,6 @@ public class MemberController {
         return "redirect:/member/signup/complete";
     }
 
-    // ==================== 회원가입 완료 ====================
-
-    /**
-     * 회원가입 완료 페이지
-     */
-    @GetMapping("/signup/complete")
-    public String signupComplete() {
-        return "member/signup-complete";
-    }
-
     // ==================== 이메일 인증 처리 ====================
 
     /**
@@ -354,6 +344,18 @@ public class MemberController {
 
         return "redirect:/member/signup/step4";
     }
+
+    // ==================== 회원가입 완료 ====================
+
+    /**
+     * 회원가입 완료 페이지
+     */
+    @GetMapping("/signup/complete")
+    public String signupComplete() {
+        return "member/signup-complete";
+    }
+
+
 
     // ==================== 유틸리티 메서드 ====================
 
