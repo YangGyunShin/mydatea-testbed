@@ -21,6 +21,12 @@ spring:
     hibernate:
       ddl-auto: update  # create → update로 변경 (기존 데이터 유지)
     show-sql: true
+    defer-datasource-initialization: true  # data.sql을 Hibernate 초기화 후 실행
+
+  # SQL 초기화 설정
+  sql:
+    init:
+      mode: always  # data.sql 항상 실행
     properties:
       hibernate:
         format_sql: true

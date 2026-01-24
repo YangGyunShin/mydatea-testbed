@@ -3,6 +3,9 @@ package com.mydata.mydatatestbed.controller;
 import com.mydata.mydatatestbed.dto.notice.NoticeDetailResponseDto;
 import com.mydata.mydatatestbed.dto.notice.NoticeListResponseDto;
 import com.mydata.mydatatestbed.service.NoticeService;
+import com.mydata.mydatatestbed.dto.faq.FaqResponseDto;
+import com.mydata.mydatatestbed.entity.Enum.FaqCategory;
+import com.mydata.mydatatestbed.service.FaqService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +44,7 @@ import java.util.Map;
 public class SupportController {
 
     private final NoticeService noticeService;
+    private final FaqService faqService;
 
     /**
      * 페이지당 게시글 수
@@ -121,6 +125,43 @@ public class SupportController {
         return "support/notice-detail";
     }
 
+    // ==================== FAQ ====================
+
+    /**
+     * FAQ 페이지
+     *
+     * @param category 카테고리 필터 (null이면 전체 조회)
+     * @param model    뷰에 전달할 데이터
+     * @return FAQ 뷰
+     * <p>
+     * 카테고리 필터링:
+     * - category 파라미터가 없으면: 전체 FAQ 표시
+     * - category 파라미터가 있으면: 해당 카테고리만 표시
+     * <p>
+     * 아코디언 UI:
+     * - 질문 클릭 시 답변 토글 (JavaScript로 처리)
+     */
+    @GetMapping("/faq")
+    public String faq(@RequestParam(required = false) FaqCategory category, Model model) {
+
+        List<FaqResponseDto> faqs;
+        if (category != null) {
+            faqs = faqService.getFaqsByCategory(category);
+        } else {
+            faqs = faqService.getAllFaqs();
+        }
+
+        model.addAttribute("faqs", faqs);
+        model.addAttribute("categories", FaqCategory.values());  // 카테고리 탭 표시용
+        model.addAttribute("selectedCategory", category);        // 현재 선택된 카테고리
+        model.addAttribute("breadcrumbItems", createFaqBreadcrumb());
+        model.addAttribute("sidebarMenus", createSupportSidebarMenus());
+        model.addAttribute("currentMenu", "/support/faq");
+
+        return "support/faq";
+    }
+
+
     // ==================== 유틸리티 메서드 ====================
 
     /**
@@ -155,6 +196,16 @@ public class SupportController {
         return List.of(
                 Map.of("name", "고객지원", "url", "#"),
                 Map.of("name", currentPageName, "url", currentPageUrl)
+        );
+    }
+
+    /**
+     * FAQ 브레드크럼 생성
+     */
+    private List<Map<String, String>> createFaqBreadcrumb() {
+        return List.of(
+                Map.of("name", "고객지원", "url", "#"),
+                Map.of("name", "FAQ", "url", "/support/faq")
         );
     }
 }

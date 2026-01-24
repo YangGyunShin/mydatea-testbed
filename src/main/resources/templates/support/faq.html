@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title>FAQ</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '자주 묻는 질문과 답변을 확인하세요')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 -->
+        <th:block th:replace="~{layout/sidebar :: sidebar('고객지원', ${sidebarMenus}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title">FAQ</h2>
+
+            <!-- 카테고리 탭 -->
+            <div class="category-tabs">
+                <!-- 전체 탭 -->
+                <a th:href="@{/support/faq}"
+                   th:classappend="${selectedCategory == null} ? ' active' : ''"
+                   class="category-tab">전체</a>
+                <!-- 각 카테고리 탭 -->
+                <a th:each="cat : ${categories}"
+                   th:href="@{/support/faq(category=${cat.name()})}"
+                   th:text="${cat.displayName}"
+                   th:classappend="${selectedCategory != null && selectedCategory.name() == cat.name()} ? ' active' : ''"
+                   class="category-tab">카테고리</a>
+            </div>
+
+            <!-- FAQ 목록 (아코디언) -->
+            <div class="faq-list" th:if="${!#lists.isEmpty(faqs)}">
+                <div class="faq-item" th:each="faq : ${faqs}">
+                    <button type="button" class="faq-question">
+                        <span class="q-mark">Q</span>
+                        <span class="question-text">
+                            <span class="faq-category-badge" th:text="'[' + ${faq.categoryDisplayName} + ']'"></span>
+                            <span th:text="${faq.question}">질문 내용</span>
+                        </span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <span class="a-mark">A</span>
+                        <div class="answer-text" th:text="${faq.answer}">답변 내용</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ가 없을 때 -->
+            <div class="empty-message" th:if="${#lists.isEmpty(faqs)}">
+                <p>등록된 FAQ가 없습니다.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+<script>
+    // FAQ 아코디언 기능은 common.js의 initFaqAccordion()에서 처리됨
+    // 추가 커스텀 스크립트가 필요하면 여기에 작성
+</script>
+</th:block>
+</body>
+</html>
