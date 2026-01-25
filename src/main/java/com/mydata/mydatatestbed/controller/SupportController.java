@@ -171,7 +171,7 @@ public class SupportController {
         return "support/faq";
     }
 
-    // === 문의하기 관련 메서드 추가 ===
+    // ==================== 문의하기 ====================
 
     // 문의 작성 폼
     @GetMapping("/inquiry")

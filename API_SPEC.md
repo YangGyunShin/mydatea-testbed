@@ -12,8 +12,8 @@
 - [고객지원 - 공지사항 (Notice)](#고객지원---공지사항-notice)
 - [고객지원 - FAQ](#고객지원---faq)
 - [고객지원 - 문의하기 (Inquiry)](#고객지원---문의하기-inquiry)
-- [고객지원 - 자료실 (Resource)](#고객지원---자료실-resource-예정)
-- [고객지원 - 자유게시판 (Board)](#고객지원---자유게시판-board-예정)
+- [고객지원 - 자료실 (Resource)](#고객지원---자료실-resource) ⏳ 예정
+- [고객지원 - 자유게시판 (Board)](#고객지원---자유게시판-board) ⏳ 예정
 - [인증 필요 여부 요약](#인증-필요-여부-요약)
 
 ---
@@ -46,9 +46,9 @@
 | **URL** | `/member/login` |
 | **Method** | `GET` / `POST` |
 | **인증** | 불필요 |
-| **설명** | 로그인 페이지 및 로그인 처리 (Spring Security Form Login) |
+| **설명** | 로그인 페이지 및 처리 (Spring Security) |
 
-**POST 요청** (Spring Security 자동 처리):
+**POST 파라미터** (Spring Security 자동 처리):
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
@@ -56,8 +56,8 @@
 | `password` | String | ✅ | 비밀번호 |
 
 **응답**:
-- 성공: `/` (메인 페이지)로 리다이렉트
-- 실패: `/member/login?error=true`로 리다이렉트
+- 성공: `/` (메인 페이지)
+- 실패: `/member/login?error=true`
 
 ---
 
@@ -68,9 +68,9 @@
 | **URL** | `/member/logout` |
 | **Method** | `POST` |
 | **인증** | 필요 |
-| **설명** | 로그아웃 처리 (Spring Security 자동 처리) |
+| **설명** | 로그아웃 처리 (Spring Security) |
 
-**응답**: `/` (메인 페이지)로 리다이렉트
+**응답**: `/` (메인 페이지)
 
 ---
 
@@ -81,7 +81,6 @@
 | **URL** | `/member/signup/step1` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 회원가입 1단계 약관동의 페이지 |
 
 ---
 
@@ -92,9 +91,8 @@
 | **URL** | `/member/signup/step2` |
 | **Method** | `GET` / `POST` |
 | **인증** | 불필요 |
-| **설명** | 회원가입 2단계 휴대폰 인증 페이지 |
 
-**POST 요청 파라미터**:
+**POST 파라미터**:
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
@@ -110,9 +108,9 @@
 | **URL** | `/member/signup/step3` |
 | **Method** | `GET` / `POST` |
 | **인증** | 불필요 |
-| **설명** | 회원가입 3단계 회원정보 입력 및 회원 생성 |
+| **설명** | 회원 생성 + 인증 메일 발송 |
 
-**POST 요청 파라미터** (`MemberSignupRequestDto`):
+**POST 파라미터** (`MemberSignupRequestDto`):
 
 | 파라미터 | 타입 | 필수 | 검증 규칙 | 설명 |
 |----------|------|------|-----------|------|
@@ -124,11 +122,6 @@
 | `company` | String | ❌ | 최대 100자 | 소속 회사/기관 |
 | `department` | String | ❌ | 최대 50자 | 부서 |
 
-**처리 로직**:
-1. 회원 생성 (`emailVerified = false`)
-2. 이메일 인증 메일 발송
-3. Step 4 페이지로 이동
-
 ---
 
 ### 회원가입 Step 4 - 이메일 인증 대기
@@ -138,7 +131,6 @@
 | **URL** | `/member/signup/step4` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 이메일 인증 대기 안내 페이지 |
 
 ---
 
@@ -149,7 +141,6 @@
 | **URL** | `/member/verify-email` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 이메일 인증 링크 처리 |
 
 **Query 파라미터**:
 
@@ -158,8 +149,8 @@
 | `token` | String | ✅ | 이메일 인증 토큰 (UUID) |
 
 **응답**:
-- 성공: `member/verify-email-success` 페이지
-- 실패: `member/verify-email-failed` 페이지
+- 성공: `member/verify-email-success`
+- 실패: `member/verify-email-failed`
 
 ---
 
@@ -171,7 +162,6 @@
 | **Method** | `POST` |
 | **인증** | 불필요 |
 | **Content-Type** | `application/x-www-form-urlencoded` |
-| **설명** | 이메일 인증 메일 재발송 |
 
 **요청 파라미터**:
 
@@ -181,10 +171,7 @@
 
 **응답** (JSON):
 ```json
-// 성공
 { "success": true, "expiresAt": "2025-01-23T12:00:00" }
-
-// 실패
 { "success": false, "message": "에러 메시지" }
 ```
 
@@ -199,21 +186,13 @@
 | **URL** | `/support/notice` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 공지사항 목록 페이지 (페이징, 검색 지원) |
 
 **Query 파라미터**:
 
 | 파라미터 | 타입 | 필수 | 기본값 | 설명 |
 |----------|------|------|--------|------|
-| `page` | int | ❌ | 0 | 페이지 번호 (0부터 시작) |
-| `keyword` | String | ❌ | "" | 검색어 (제목/내용 검색) |
-
-**Model 데이터**:
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `notices` | `Page<NoticeListResponseDto>` | 공지사항 목록 (페이징) |
-| `keyword` | String | 검색어 |
+| `page` | int | ❌ | 0 | 페이지 번호 |
+| `keyword` | String | ❌ | "" | 검색어 (제목/내용) |
 
 **NoticeListResponseDto**:
 
@@ -236,13 +215,7 @@
 | **URL** | `/support/notice/{id}` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 공지사항 상세 페이지 (조회 시 조회수 증가) |
-
-**Path 파라미터**:
-
-| 파라미터 | 타입 | 설명 |
-|----------|------|------|
-| `id` | Long | 공지사항 ID |
+| **설명** | 조회 시 조회수 증가 |
 
 **NoticeDetailResponseDto**:
 
@@ -270,7 +243,7 @@
 | **URL** | `/support/faq` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | FAQ 목록 페이지 (카테고리별 필터링, 아코디언 UI) |
+| **설명** | 카테고리별 필터링, 아코디언 UI |
 
 **Query 파라미터**:
 
@@ -311,7 +284,6 @@
 | **URL** | `/support/inquiry` |
 | **Method** | `GET` |
 | **인증** | ✅ 필요 |
-| **설명** | 문의 작성 페이지 |
 
 ---
 
@@ -322,14 +294,13 @@
 | **URL** | `/support/inquiry` |
 | **Method** | `POST` |
 | **인증** | ✅ 필요 |
-| **설명** | 문의 등록 처리 |
 
 **요청 파라미터** (`InquiryRequestDto`):
 
 | 파라미터 | 타입 | 필수 | 검증 규칙 | 설명 |
 |----------|------|------|-----------|------|
-| `title` | String | ✅ | 최대 200자 | 문의 제목 |
-| `content` | String | ✅ | - | 문의 내용 |
+| `title` | String | ✅ | @NotBlank, 최대 200자 | 문의 제목 |
+| `content` | String | ✅ | @NotBlank | 문의 내용 |
 
 **응답**: `/support/inquiry/list`로 리다이렉트 + Flash 메시지
 
@@ -342,7 +313,7 @@
 | **URL** | `/support/inquiry/list` |
 | **Method** | `GET` |
 | **인증** | ✅ 필요 |
-| **설명** | 로그인한 사용자의 문의 목록 (본인 문의만 조회) |
+| **설명** | 본인 문의만 조회 |
 
 **Query 파라미터**:
 
@@ -363,8 +334,8 @@
 |------|------|------|
 | `id` | Long | 문의 ID |
 | `title` | String | 제목 |
-| `status` | InquiryStatus | 상태 (WAITING/COMPLETED) |
-| `statusDisplayName` | String | 상태 표시명 (대기/완료) |
+| `status` | InquiryStatus | 상태 |
+| `statusDisplayName` | String | 상태 표시명 |
 | `createdAt` | LocalDateTime | 등록일 |
 | `answeredAt` | LocalDateTime | 답변일 (null 가능) |
 
@@ -377,13 +348,7 @@
 | **URL** | `/support/inquiry/{id}` |
 | **Method** | `GET` |
 | **인증** | ✅ 필요 |
-| **설명** | 문의 상세 + 답변 확인 (본인 문의만 조회 가능) |
-
-**Path 파라미터**:
-
-| 파라미터 | 타입 | 설명 |
-|----------|------|------|
-| `id` | Long | 문의 ID |
+| **설명** | 본인 문의만 조회 가능 |
 
 **InquiryResponseDto**:
 
@@ -411,7 +376,9 @@
 
 ---
 
-## 고객지원 - 자료실 (Resource) (예정)
+## 고객지원 - 자료실 (Resource)
+
+> ⏳ **구현 예정**
 
 ### 자료 목록 조회
 
@@ -420,7 +387,25 @@
 | **URL** | `/support/resource` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 자료실 목록 페이지 |
+
+**Query 파라미터** (예정):
+
+| 파라미터 | 타입 | 필수 | 기본값 | 설명 |
+|----------|------|------|--------|------|
+| `page` | int | ❌ | 0 | 페이지 번호 |
+
+**ResourceListResponseDto** (예정):
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `id` | Long | 자료 ID |
+| `title` | String | 제목 |
+| `description` | String | 설명 |
+| `fileName` | String | 파일명 |
+| `fileSize` | Long | 파일 크기 (bytes) |
+| `downloadCount` | int | 다운로드 수 |
+| `authorName` | String | 작성자 이름 |
+| `createdAt` | LocalDateTime | 등록일 |
 
 ---
 
@@ -431,11 +416,13 @@
 | **URL** | `/support/resource/{id}/download` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 자료 파일 다운로드 (다운로드 수 증가) |
+| **설명** | 파일 다운로드 + 다운로드 수 증가 |
 
 ---
 
-## 고객지원 - 자유게시판 (Board) (예정)
+## 고객지원 - 자유게시판 (Board)
+
+> ⏳ **구현 예정**
 
 ### 게시글 목록 조회
 
@@ -444,7 +431,13 @@
 | **URL** | `/support/board` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 자유게시판 목록 페이지 |
+
+**Query 파라미터** (예정):
+
+| 파라미터 | 타입 | 필수 | 기본값 | 설명 |
+|----------|------|------|--------|------|
+| `page` | int | ❌ | 0 | 페이지 번호 |
+| `keyword` | String | ❌ | "" | 검색어 |
 
 ---
 
@@ -455,7 +448,7 @@
 | **URL** | `/support/board/{id}` |
 | **Method** | `GET` |
 | **인증** | 불필요 |
-| **설명** | 게시글 상세 페이지 |
+| **설명** | 조회 시 조회수 증가 |
 
 ---
 
@@ -466,7 +459,6 @@
 | **URL** | `/support/board/write` |
 | **Method** | `GET` |
 | **인증** | ✅ 필요 |
-| **설명** | 게시글 작성 페이지 |
 
 ---
 
@@ -477,7 +469,13 @@
 | **URL** | `/support/board/write` |
 | **Method** | `POST` |
 | **인증** | ✅ 필요 |
-| **설명** | 게시글 등록 처리 |
+
+**요청 파라미터** (예정):
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `title` | String | ✅ | 제목 |
+| `content` | String | ✅ | 내용 |
 
 ---
 
@@ -490,12 +488,14 @@
 | `/css/**`, `/js/**`, `/images/**` | 정적 리소스 |
 | `/` | 메인 페이지 |
 | `/intro/**`, `/api-guide/**` | 소개, API 가이드 |
-| `/member/login`, `/member/signup/**` | 로그인, 회원가입 |
-| `/member/verify-email`, `/member/resend-verification` | 이메일 인증 |
+| `/member/login` | 로그인 |
+| `/member/signup/**` | 회원가입 |
+| `/member/verify-email` | 이메일 인증 |
+| `/member/resend-verification` | 인증 메일 재발송 |
 | `/support/notice/**` | 공지사항 |
 | `/support/faq` | FAQ |
 | `/support/resource/**` | 자료실 (예정) |
-| `/support/board` (목록/상세) | 자유게시판 목록/상세 (예정) |
+| `/support/board` (목록/상세) | 자유게시판 (예정) |
 | `/h2-console/**` | H2 콘솔 (개발용) |
 
 ### 인증 필요 URL
@@ -507,3 +507,33 @@
 | `/testbed/**` | 테스트베드 (예정) |
 | `/conformance/**` | 적합성 심사 (예정) |
 | `/admin/**` | 관리자 (ADMIN 권한, 예정) |
+
+---
+
+## SecurityConfig 참고
+
+```java
+http.authorizeHttpRequests(auth -> auth
+    // 정적 리소스
+    .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+    
+    // 공개 페이지
+    .requestMatchers("/", "/intro/**", "/api-guide/**").permitAll()
+    .requestMatchers("/member/login", "/member/signup/**").permitAll()
+    .requestMatchers("/member/verify-email", "/member/resend-verification").permitAll()
+    
+    // 고객지원 - 인증 필요 (순서 중요!)
+    .requestMatchers("/support/inquiry/**").authenticated()
+    
+    // 고객지원 - 공개
+    .requestMatchers("/support/**").permitAll()
+    
+    // H2 콘솔 (개발용)
+    .requestMatchers("/h2-console/**").permitAll()
+    
+    // 나머지는 인증 필요
+    .anyRequest().authenticated()
+);
+```
+
+> ⚠️ **순서 주의**: `/support/inquiry/**`가 `/support/**`보다 먼저 와야 합니다.

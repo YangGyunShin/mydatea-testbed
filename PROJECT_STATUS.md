@@ -21,77 +21,76 @@ Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 
 ### Phase 1: 기본 구조 ✅
 
-| 분류 | 항목 | 상태 |
+| 분류 | 항목 | 파일 |
 |------|------|------|
-| **Config** | SecurityConfig, WebConfig, AuditConfig | ✅ |
-| **Layout** | default-layout, header, footer, sidebar | ✅ |
-| **Fragments** | breadcrumb, pagination, page-banner | ✅ |
-| **CSS** | common, header, footer, sidebar, main, sub-page, form | ✅ |
-| **JS** | common.js, main.js | ✅ |
-| **Controller** | MainController | ✅ |
-| **Page** | index.html (메인 페이지) | ✅ |
+| **Config** | 보안, 웹, Auditing 설정 | `SecurityConfig`, `WebConfig`, `AuditConfig` |
+| **Layout** | 레이아웃 템플릿 | `default-layout`, `header`, `footer`, `sidebar` |
+| **Fragments** | 공통 UI 조각 | `breadcrumb`, `pagination`, `page-banner` |
+| **CSS** | 스타일시트 | `common`, `header`, `footer`, `sidebar`, `main`, `sub-page`, `form` |
+| **JS** | 스크립트 | `common.js`, `main.js` |
+| **Page** | 메인 페이지 | `index.html`, `MainController` |
 
 ### Phase 2: 회원 기능 ✅
 
-| 분류 | 항목 | 상태 |
+| 분류 | 항목 | 파일 |
 |------|------|------|
-| **Entity** | Member, BaseTimeEntity | ✅ |
-| **VO** | Email, Password, Phone | ✅ |
-| **Enum** | MemberRole | ✅ |
-| **Repository** | MemberRepository, EmailVerificationTokenRepository | ✅ |
-| **DTO** | MemberSignupRequestDto, MemberResponseDto | ✅ |
-| **Mapper** | MemberMapper | ✅ |
-| **Service** | MemberService, EmailService | ✅ |
-| **Security** | CustomUserDetails, CustomUserDetailsService | ✅ |
-| **Controller** | MemberController | ✅ |
-| **Templates** | login, signup-step1~4, verify-email-success/failed | ✅ |
+| **Entity** | 회원, 공통 시간 | `Member`, `BaseTimeEntity` |
+| **VO** | 값 객체 | `Email`, `Password`, `Phone` |
+| **Enum** | 회원 역할 | `MemberRole` |
+| **Repository** | 데이터 접근 | `MemberRepository`, `EmailVerificationTokenRepository` |
+| **DTO** | 데이터 전송 | `MemberSignupRequestDto`, `MemberResponseDto` |
+| **Mapper** | 변환 | `MemberMapper` |
+| **Service** | 비즈니스 로직 | `MemberService`, `EmailService` |
+| **Security** | 인증/인가 | `CustomUserDetails`, `CustomUserDetailsService` |
+| **Controller** | 요청 처리 | `MemberController` |
+| **Templates** | 화면 | `login`, `signup-step1~4`, `verify-email-*` |
 
 ### Phase 3: 게시판 기능 (진행 중)
 
 #### 3-1. 공지사항 (Notice) ✅
 
-| 항목 | 상태 |
+| 항목 | 파일 |
 |------|------|
-| Notice Entity | ✅ |
-| NoticeRepository | ✅ |
-| NoticeListResponseDto, NoticeDetailResponseDto | ✅ |
-| NoticeMapper | ✅ |
-| NoticeService / NoticeServiceImpl | ✅ |
-| SupportController (Notice 부분) | ✅ |
-| notice-list.html, notice-detail.html | ✅ |
+| Entity | `Notice.java` |
+| Repository | `NoticeRepository.java` |
+| DTO | `NoticeListResponseDto`, `NoticeDetailResponseDto` |
+| Mapper | `NoticeMapper.java` |
+| Service | `NoticeService`, `NoticeServiceImpl` |
+| Controller | `SupportController` (Notice 부분) |
+| Templates | `notice-list.html`, `notice-detail.html` |
 
 #### 3-2. FAQ ✅
 
-| 항목 | 상태 |
+| 항목 | 파일 |
 |------|------|
-| Faq Entity | ✅ |
-| FaqCategory Enum | ✅ |
-| FaqRepository | ✅ |
-| FaqResponseDto | ✅ |
-| FaqMapper | ✅ |
-| FaqService / FaqServiceImpl | ✅ |
-| SupportController (FAQ 부분) | ✅ |
-| faq.html (카테고리 탭, 아코디언) | ✅ |
-| data.sql 초기 데이터 | ✅ |
+| Entity | `Faq.java` |
+| Enum | `FaqCategory.java` |
+| Repository | `FaqRepository.java` |
+| DTO | `FaqResponseDto.java` |
+| Mapper | `FaqMapper.java` |
+| Service | `FaqService`, `FaqServiceImpl` |
+| Controller | `SupportController` (FAQ 부분) |
+| Templates | `faq.html` |
+| 초기 데이터 | `data.sql` |
 
 #### 3-3. 문의하기 (Inquiry) ✅
 
-| 항목 | 상태 |
+| 항목 | 파일 |
 |------|------|
-| Inquiry Entity | ✅ |
-| InquiryStatus Enum (WAITING, COMPLETED) | ✅ |
-| InquiryRepository | ✅ |
-| InquiryRequestDto, InquiryResponseDto, InquiryListResponseDto | ✅ |
-| InquiryMapper | ✅ |
-| InquiryService / InquiryServiceImpl | ✅ |
-| SupportController (Inquiry 부분) | ✅ |
-| inquiry-form.html, inquiry-list.html, inquiry-detail.html | ✅ |
+| Entity | `Inquiry.java` |
+| Enum | `InquiryStatus.java` (WAITING, COMPLETED) |
+| Repository | `InquiryRepository.java` |
+| DTO | `InquiryRequestDto`, `InquiryResponseDto`, `InquiryListResponseDto` |
+| Mapper | `InquiryMapper.java` |
+| Service | `InquiryService`, `InquiryServiceImpl` |
+| Controller | `SupportController` (Inquiry 부분) |
+| Templates | `inquiry-form.html`, `inquiry-list.html`, `inquiry-detail.html` |
 
 ---
 
 ## 📝 남은 작업
 
-### Phase 3-4: 자료실 (Resource)
+### Phase 3-4: 자료실 (Resource) ⬜
 
 | 항목 | 상태 |
 |------|------|
@@ -104,7 +103,7 @@ Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 | resource-list.html | ⬜ |
 | 파일 다운로드 기능 | ⬜ |
 
-### Phase 3-5: 자유게시판 (Board)
+### Phase 3-5: 자유게시판 (Board) ⬜
 
 | 항목 | 상태 |
 |------|------|
@@ -116,7 +115,7 @@ Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 | SupportController (Board 부분) | ⬜ |
 | board-list.html, board-detail.html, board-write.html | ⬜ |
 
-### Phase 4: 핵심 기능 (예정)
+### Phase 4: 핵심 기능 (예정) ⬜
 
 | 항목 | 상태 |
 |------|------|
@@ -124,7 +123,7 @@ Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 | 테스트베드 기능 | ⬜ |
 | 적합성 심사 기능 | ⬜ |
 
-### Phase 5: 완성도 (예정)
+### Phase 5: 완성도 (예정) ⬜
 
 | 항목 | 상태 |
 |------|------|
@@ -140,21 +139,25 @@ Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 
 ```
 src/main/java/com/mydata/mydatatestbed/
+├── MydataTestbedApplication.java
+│
 ├── config/
 │   ├── SecurityConfig.java
 │   ├── WebConfig.java
 │   └── AuditConfig.java
+│
 ├── controller/
 │   ├── MainController.java
 │   ├── MemberController.java
 │   └── SupportController.java
+│
 ├── entity/
 │   ├── BaseTimeEntity.java
 │   ├── Member.java
 │   ├── Notice.java
 │   ├── Faq.java
 │   ├── Inquiry.java
-│   ├── Enum/
+│   ├── enums/
 │   │   ├── MemberRole.java
 │   │   ├── FaqCategory.java
 │   │   └── InquiryStatus.java
@@ -162,54 +165,92 @@ src/main/java/com/mydata/mydatatestbed/
 │       ├── Email.java
 │       ├── Password.java
 │       └── Phone.java
+│
 ├── repository/
 │   ├── MemberRepository.java
 │   ├── EmailVerificationTokenRepository.java
 │   ├── NoticeRepository.java
 │   ├── FaqRepository.java
 │   └── InquiryRepository.java
+│
 ├── dto/
 │   ├── member/
+│   │   ├── MemberSignupRequestDto.java
+│   │   └── MemberResponseDto.java
 │   ├── notice/
+│   │   ├── NoticeListResponseDto.java
+│   │   └── NoticeDetailResponseDto.java
 │   ├── faq/
+│   │   └── FaqResponseDto.java
 │   └── inquiry/
+│       ├── InquiryRequestDto.java
+│       ├── InquiryResponseDto.java
+│       └── InquiryListResponseDto.java
+│
 ├── mapper/
 │   ├── MemberMapper.java
 │   ├── NoticeMapper.java
 │   ├── FaqMapper.java
 │   └── InquiryMapper.java
+│
 ├── service/
 │   ├── MemberService.java
 │   ├── EmailService.java
 │   ├── NoticeService.java
 │   ├── FaqService.java
-│   └── InquiryService.java
-├── service/impl/
-│   ├── NoticeServiceImpl.java
-│   ├── FaqServiceImpl.java
-│   └── InquiryServiceImpl.java
+│   ├── InquiryService.java
+│   └── impl/
+│       ├── NoticeServiceImpl.java
+│       ├── FaqServiceImpl.java
+│       └── InquiryServiceImpl.java
+│
 └── security/
     ├── CustomUserDetails.java
     └── CustomUserDetailsService.java
 
 src/main/resources/
+├── application.yml
+├── data.sql
 ├── templates/
 │   ├── layout/
+│   │   ├── default-layout.html
+│   │   ├── header.html
+│   │   ├── footer.html
+│   │   └── sidebar.html
 │   ├── fragments/
+│   │   ├── breadcrumb.html
+│   │   ├── pagination.html
+│   │   └── page-banner.html
 │   ├── main/
+│   │   └── index.html
 │   ├── member/
-│   └── support/
-│       ├── notice-list.html
-│       ├── notice-detail.html
-│       ├── faq.html
-│       ├── inquiry-form.html
-│       ├── inquiry-list.html
-│       └── inquiry-detail.html
-├── static/
-│   ├── css/
-│   └── js/
-├── application.yml
-└── data.sql
+│   │   ├── login.html
+│   │   ├── signup-step1-terms.html
+│   │   ├── signup-step2-phone.html
+│   │   ├── signup-step3-info.html
+│   │   ├── signup-step4-email.html
+│   │   ├── verify-email-success.html
+│   │   └── verify-email-failed.html
+│   ├── support/
+│   │   ├── notice-list.html
+│   │   ├── notice-detail.html
+│   │   ├── faq.html
+│   │   ├── inquiry-form.html
+│   │   ├── inquiry-list.html
+│   │   └── inquiry-detail.html
+│   └── error/
+└── static/
+    ├── css/
+    │   ├── common.css
+    │   ├── header.css
+    │   ├── footer.css
+    │   ├── sidebar.css
+    │   ├── main.css
+    │   ├── sub-page.css
+    │   └── form.css
+    └── js/
+        ├── common.js
+        └── main.js
 ```
 
 ---
@@ -224,6 +265,7 @@ src/main/resources/
 | `/member/login` | GET/POST | 로그인 |
 | `/member/signup/step1~4` | GET/POST | 회원가입 |
 | `/member/verify-email` | GET | 이메일 인증 |
+| `/member/resend-verification` | POST | 인증 메일 재발송 |
 | `/support/notice` | GET | 공지사항 목록 |
 | `/support/notice/{id}` | GET | 공지사항 상세 |
 | `/support/faq` | GET | FAQ |
@@ -239,35 +281,11 @@ src/main/resources/
 
 ---
 
-## 📐 코딩 컨벤션
-
-### 어노테이션 패턴
-
-| 클래스 유형 | 어노테이션 |
-|------------|-----------|
-| **Entity** | `@Getter @NoArgsConstructor(access = PROTECTED)` + 생성자에 `@Builder` |
-| **ResponseDto** | `@Getter @Builder` |
-| **RequestDto** | `@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor` |
-| **Mapper** | `@Component` |
-| **Service** | `@Service @RequiredArgsConstructor @Transactional(readOnly = true)` |
-
-### 필수 규칙
-
-| 규칙 | 설명 |
-|------|------|
-| ❌ No Factory Method | `of()`, `from()` 정적 팩토리 메서드 사용 금지 |
-| ❌ No Setter | Entity, ResponseDto에 Setter 금지 (RequestDto만 예외) |
-| ✅ Use Mapper | DTO ↔ Entity 변환은 별도 Mapper 클래스 사용 |
-| ✅ LAZY Loading | `@ManyToOne`에 `fetch = FetchType.LAZY` 필수 |
-| ✅ N+1 방지 | JOIN FETCH 쿼리 사용 |
-
----
-
-## 📚 참고 문서
+## 📚 관련 문서
 
 | 문서 | 설명 |
 |------|------|
-| `README.md` | 프로젝트 소개, 실행 방법 |
-| `API_SPEC.md` | API 엔드포인트 상세 명세 |
-| `TROUBLESHOOTING.md` | 트러블슈팅 가이드 |
-| `NEXT_SESSION_TEMPLATE.md` | 다음 세션 작업 요청서 |
+| [README.md](README.md) | 프로젝트 소개, 빠른 시작 |
+| [API_SPEC.md](API_SPEC.md) | API 엔드포인트 상세 명세 |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | 트러블슈팅 가이드 |
+| [NEXT_SESSION_TEMPLATE.md](NEXT_SESSION_TEMPLATE.md) | 코딩 컨벤션, 다음 작업 |
