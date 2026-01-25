@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title>문의하기</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+        <link rel="stylesheet" th:href="@{/css/form.css}">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '마이데이터 테스트베드 문의하기')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 -->
+        <th:block th:replace="~{layout/sidebar :: sidebar('고객지원', ${sidebarMenus}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title">문의하기</h2>
+
+            <!-- 안내 문구 -->
+            <div class="info-box highlight">
+                <p style="margin: 0;">
+                    마이데이터 테스트베드 이용 중 궁금한 점이나 문의사항을 남겨주세요.<br>
+                    빠른 시일 내에 답변 드리겠습니다.
+                </p>
+            </div>
+
+            <!-- 문의 작성 폼 -->
+            <form th:action="@{/support/inquiry}" method="post" th:object="${inquiryRequest}" class="inquiry-form">
+                <div class="form-group">
+                    <label for="title" class="form-label required">제목</label>
+                    <input type="text" id="title" th:field="*{title}" class="form-control" 
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                           placeholder="제목을 입력해주세요" maxlength="200">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                        제목 오류 메시지
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content" class="form-label required">내용</label>
+                    <textarea id="content" th:field="*{content}" class="form-control" 
+                              th:classappend="${#fields.hasErrors('content')} ? 'is-invalid' : ''"
+                              placeholder="문의 내용을 상세히 입력해주세요" rows="10"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+                        내용 오류 메시지
+                    </div>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="form-actions">
+                    <a th:href="@{/support/inquiry/list}" class="btn btn-secondary">내 문의 목록</a>
+                    <button type="submit" class="btn btn-primary">문의 등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

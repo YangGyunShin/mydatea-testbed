@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title>문의 상세</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+        <style>
+            .inquiry-view {
+                border-top: 2px solid #1e3a5f;
+            }
+            .inquiry-header {
+                padding: 24px;
+                background-color: #f8f9fa;
+                border-bottom: 1px solid #e9ecef;
+            }
+            .inquiry-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 12px;
+            }
+            .inquiry-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                font-size: 0.875rem;
+                color: #6c757d;
+            }
+            .inquiry-meta span {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .inquiry-content {
+                padding: 32px 24px;
+                min-height: 200px;
+                border-bottom: 1px solid #e9ecef;
+                line-height: 1.8;
+                white-space: pre-wrap;
+            }
+            .answer-section {
+                background-color: #f0f7ff;
+                border: 1px solid #b6d4fe;
+                border-radius: 8px;
+                margin: 24px;
+                overflow: hidden;
+            }
+            .answer-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 20px;
+                background-color: #e7f1ff;
+                border-bottom: 1px solid #b6d4fe;
+            }
+            .answer-header h3 {
+                font-size: 1rem;
+                font-weight: 600;
+                color: #0d6efd;
+                margin: 0;
+            }
+            .answer-meta {
+                font-size: 0.875rem;
+                color: #6c757d;
+            }
+            .answer-content {
+                padding: 20px;
+                line-height: 1.8;
+                white-space: pre-wrap;
+            }
+            .waiting-answer {
+                padding: 40px 24px;
+                text-align: center;
+                color: #6c757d;
+                background-color: #f8f9fa;
+                margin: 24px;
+                border-radius: 8px;
+            }
+            .waiting-answer .icon {
+                font-size: 2.5rem;
+                margin-bottom: 12px;
+            }
+            .inquiry-nav {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                padding: 24px;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '마이데이터 테스트베드 문의하기')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 -->
+        <th:block th:replace="~{layout/sidebar :: sidebar('고객지원', ${sidebarMenus}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title">문의 상세</h2>
+
+            <!-- 문의 상세 -->
+            <article class="inquiry-view">
+                <!-- 문의 헤더 -->
+                <div class="inquiry-header">
+                    <h3 class="inquiry-title" th:text="${inquiry.title}">문의 제목</h3>
+                    <div class="inquiry-meta">
+                        <span>
+                            <strong>작성자:</strong> 
+                            <span th:text="${inquiry.memberName}">홍길동</span>
+                        </span>
+                        <span>
+                            <strong>등록일:</strong> 
+                            <span th:text="${#temporals.format(inquiry.createdAt, 'yyyy.MM.dd HH:mm')}">2025.01.17 10:30</span>
+                        </span>
+                        <span>
+                            <strong>상태:</strong>
+                            <span class="badge" 
+                                  th:classappend="${inquiry.status.name() == 'WAITING'} ? 'badge-secondary' : 'badge-success'"
+                                  th:text="${inquiry.statusDisplayName}">대기</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 문의 내용 -->
+                <div class="inquiry-content" th:text="${inquiry.content}">
+                    문의 내용이 표시됩니다.
+                </div>
+
+                <!-- 답변 섹션 (답변 완료 시) -->
+                <div class="answer-section" th:if="${inquiry.answer != null}">
+                    <div class="answer-header">
+                        <h3>💬 답변</h3>
+                        <div class="answer-meta">
+                            <span th:if="${inquiry.answererName}" th:text="${inquiry.answererName}">관리자</span>
+                            <span th:text="' | ' + ${#temporals.format(inquiry.answeredAt, 'yyyy.MM.dd HH:mm')}"> | 2025.01.18 14:00</span>
+                        </div>
+                    </div>
+                    <div class="answer-content" th:text="${inquiry.answer}">
+                        답변 내용이 표시됩니다.
+                    </div>
+                </div>
+
+                <!-- 답변 대기 중 (미답변 시) -->
+                <div class="waiting-answer" th:if="${inquiry.answer == null}">
+                    <div class="icon">⏳</div>
+                    <p>답변을 기다리고 있습니다.<br>빠른 시일 내에 답변 드리겠습니다.</p>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="inquiry-nav">
+                    <a th:href="@{/support/inquiry/list}" class="btn btn-secondary">목록으로</a>
+                    <a th:href="@{/support/inquiry}" class="btn btn-primary">새 문의 작성</a>
+                </div>
+            </article>
+        </div>
+    </div>
+</main>
+</body>
+</html>
