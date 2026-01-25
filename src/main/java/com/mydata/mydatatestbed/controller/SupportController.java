@@ -82,10 +82,9 @@ public class SupportController {
      * - keyword가 있으면 제목/내용에서 검색
      */
     @GetMapping("/notice")
-    public String noticeList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "") String keyword,
-            Model model) {
+    public String noticeList(@RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "") String keyword,
+                             Model model) {
 
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
 
@@ -121,7 +120,8 @@ public class SupportController {
      * - @Transactional로 묶여 있어 조회수 증가가 DB에 반영됨
      */
     @GetMapping("/notice/{id}")
-    public String noticeDetail(@PathVariable Long id, Model model) {
+    public String noticeDetail(@PathVariable Long id,
+                               Model model) {
 
         // 조회수 증가 포함 조회
         NoticeDetailResponseDto notice = noticeService.getNoticeDetailWithViewCount(id);
@@ -151,7 +151,8 @@ public class SupportController {
      * - 질문 클릭 시 답변 토글 (JavaScript로 처리)
      */
     @GetMapping("/faq")
-    public String faq(@RequestParam(required = false) FaqCategory category, Model model) {
+    public String faq(@RequestParam(required = false) FaqCategory category,
+                      Model model) {
 
         List<FaqResponseDto> faqs;
         if (category != null) {
@@ -221,10 +222,9 @@ public class SupportController {
 
     // 문의 상세
     @GetMapping("/inquiry/{id}")
-    public String inquiryDetail(
-            @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            Model model) {
+    public String inquiryDetail(@PathVariable Long id,
+                                @AuthenticationPrincipal CustomUserDetails userDetails,
+                                Model model) {
 
         InquiryResponseDto inquiry = inquiryService.getInquiryDetail(id, userDetails.getMember());
         model.addAttribute("inquiry", inquiry);
