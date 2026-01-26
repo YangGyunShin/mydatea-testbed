@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title th:text="${isEdit} ? '게시글 수정' : '게시글 작성'">게시글 작성</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+        <link rel="stylesheet" th:href="@{/css/form.css}">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '자유게시판')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 -->
+        <th:block th:replace="~{layout/sidebar :: sidebar(${menuTitle}, ${menuItems}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title" th:text="${isEdit} ? '게시글 수정' : '게시글 작성'">게시글 작성</h2>
+
+            <!-- 알림 메시지 -->
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- 작성 폼 -->
+            <form th:action="${isEdit} ? @{/support/board/{id}/edit(id=${board.id})} : @{/support/board/write}" 
+                  method="post" 
+                  enctype="multipart/form-data"
+                  class="board-form">
+                
+                <div class="form-group">
+                    <label for="title" class="form-label required">제목</label>
+                    <input type="text" 
+                           id="title" 
+                           name="title" 
+                           class="form-control" 
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                           th:value="${boardRequest.title}"
+                           placeholder="제목을 입력하세요"
+                           maxlength="200"
+                           required>
+                    <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback" th:errors="*{title}">
+                        제목 오류 메시지
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content" class="form-label required">내용</label>
+                    <textarea id="content" 
+                              name="content" 
+                              class="form-control" 
+                              th:classappend="${#fields.hasErrors('content')} ? 'is-invalid' : ''"
+                              th:text="${boardRequest.content}"
+                              placeholder="내용을 입력하세요"
+                              rows="15"
+                              required></textarea>
+                    <div th:if="${#fields.hasErrors('content')}" class="invalid-feedback" th:errors="*{content}">
+                        내용 오류 메시지
+                    </div>
+                </div>
+
+                <!-- 기존 첨부파일 표시 (수정 시) -->
+                <div class="form-group" th:if="${isEdit and board.hasAttachment()}">
+                    <label class="form-label">현재 첨부파일</label>
+                    <div class="current-file">
+                        <span class="file-info">
+                            📎 <span th:text="${board.attachmentName}">파일명.pdf</span>
+                            (<span th:text="${board.formattedFileSize}">1.2 MB</span>)
+                        </span>
+                        <label class="delete-file-label">
+                            <input type="checkbox" name="deleteAttachment" value="true">
+                            <span>파일 삭제</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="file" class="form-label">첨부파일</label>
+                    <div class="file-upload">
+                        <input type="file" 
+                               id="file" 
+                               name="file"
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.hwp">
+                        <label for="file" class="file-upload-label">
+                            <span>📎 파일 선택</span>
+                            <span class="file-name">선택된 파일 없음</span>
+                        </label>
+                    </div>
+                    <p class="form-text text-muted">
+                        * 첨부 가능 파일: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, ZIP, HWP (최대 10MB)
+                    </p>
+                </div>
+
+                <div class="form-actions">
+                    <a th:href="${isEdit} ? @{/support/board/{id}(id=${board.id})} : @{/support/board}" 
+                       class="btn btn-secondary">취소</a>
+                    <button type="submit" class="btn btn-primary" th:text="${isEdit} ? '수정' : '등록'">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 파일 선택 시 파일명 표시
+    const fileInput = document.getElementById('file');
+    const fileNameSpan = document.querySelector('.file-name');
+    
+    if (fileInput && fileNameSpan) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                
+                if (file.size > maxSize) {
+                    alert('파일 크기는 10MB 이하만 첨부 가능합니다.');
+                    this.value = '';
+                    fileNameSpan.textContent = '선택된 파일 없음';
+                    return;
+                }
+                
+                fileNameSpan.textContent = file.name;
+            } else {
+                fileNameSpan.textContent = '선택된 파일 없음';
+            }
+        });
+    }
+    
+    // 폼 제출 전 확인
+    const form = document.querySelector('.board-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            if (!title) {
+                e.preventDefault();
+                alert('제목을 입력해주세요.');
+                document.getElementById('title').focus();
+                return;
+            }
+            
+            if (!content) {
+                e.preventDefault();
+                alert('내용을 입력해주세요.');
+                document.getElementById('content').focus();
+                return;
+            }
+        });
+    }
+});
+</script>
+<style>
+/* 추가 스타일 */
+.board-form {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 32px;
+}
+
+.board-form .form-group {
+    margin-bottom: 24px;
+}
+
+.board-form textarea {
+    min-height: 300px;
+    resize: vertical;
+}
+
+.current-file {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.current-file .file-info {
+    color: #495057;
+}
+
+.delete-file-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #dc3545;
+    font-size: 0.875rem;
+}
+
+.delete-file-label input {
+    cursor: pointer;
+}
+
+.form-text {
+    margin-top: 8px;
+    font-size: 0.8125rem;
+}
+</style>
+</th:block>
+</body>
+</html>

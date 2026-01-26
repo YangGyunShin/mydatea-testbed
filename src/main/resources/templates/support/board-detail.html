@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title>자유게시판 - 상세보기</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '자유게시판')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 -->
+        <th:block th:replace="~{layout/sidebar :: sidebar(${menuTitle}, ${menuItems}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title">자유게시판</h2>
+
+            <!-- 알림 메시지 -->
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- 게시글 상세 -->
+            <div class="board-view">
+                <div class="board-view-header">
+                    <h3 class="board-view-title" th:text="${board.title}">게시글 제목</h3>
+                    <div class="board-view-info">
+                        <span>👤 <strong th:text="${board.authorName}">작성자</strong></span>
+                        <span>📅 <span th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd HH:mm')}">2025.01.20 10:00</span></span>
+                        <span>👁 조회 <span th:text="${board.viewCount}">0</span></span>
+                        <span th:if="${board.updatedAt != board.createdAt}">
+                            ✏️ 수정 <span th:text="${#temporals.format(board.updatedAt, 'yyyy.MM.dd HH:mm')}">2025.01.20 12:00</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="board-view-content" th:utext="${#strings.replace(board.content, T(System).lineSeparator(), '&lt;br&gt;')}">
+                    게시글 내용이 여기에 표시됩니다.
+                </div>
+
+                <!-- 첨부파일 -->
+                <div class="board-view-file" th:if="${board.hasAttachment()}">
+                    <strong>📎 첨부파일:</strong>
+                    <a th:href="@{/support/board/{id}/download(id=${board.id})}" th:text="${board.attachmentName + ' (' + board.formattedFileSize + ')'}">
+                        첨부파일.pdf (1.2 MB)
+                    </a>
+                </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="board-view-nav">
+                    <a th:href="@{/support/board}" class="btn btn-secondary">목록</a>
+                    
+                    <!-- 작성자 또는 관리자만 수정/삭제 가능 -->
+                    <th:block th:if="${isAuthor or isAdmin}">
+                        <a th:href="@{/support/board/{id}/edit(id=${board.id})}" class="btn btn-outline">수정</a>
+                        <form th:action="@{/support/board/{id}/delete(id=${board.id})}" method="post" style="display: inline;"
+                              onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                            <button type="submit" class="btn btn-danger-outline">삭제</button>
+                        </form>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+<style>
+/* 추가 스타일 */
+.btn-danger-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-danger-outline:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+</style>
+</th:block>
+</body>
+</html>
