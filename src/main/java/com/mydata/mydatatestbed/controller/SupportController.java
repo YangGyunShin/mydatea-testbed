@@ -5,19 +5,22 @@ import com.mydata.mydatatestbed.dto.inquiry.InquiryRequestDto;
 import com.mydata.mydatatestbed.dto.inquiry.InquiryResponseDto;
 import com.mydata.mydatatestbed.dto.notice.NoticeDetailResponseDto;
 import com.mydata.mydatatestbed.dto.notice.NoticeListResponseDto;
+import com.mydata.mydatatestbed.dto.resource.ResourceListResponseDto;
 import com.mydata.mydatatestbed.security.CustomUserDetails;
 import com.mydata.mydatatestbed.service.InquiryService;
 import com.mydata.mydatatestbed.service.NoticeService;
 import com.mydata.mydatatestbed.dto.faq.FaqResponseDto;
 import com.mydata.mydatatestbed.entity.Enum.FaqCategory;
 import com.mydata.mydatatestbed.service.FaqService;
+import com.mydata.mydatatestbed.service.ResourceService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +61,7 @@ public class SupportController {
     private final NoticeService noticeService;
     private final FaqService faqService;
     private final InquiryService inquiryService;
+    private final ResourceService resourceService;
 
     /**
      * 페이지당 게시글 수
@@ -234,6 +242,69 @@ public class SupportController {
         return "support/inquiry-detail";
     }
 
+    // ==================== 자료실 ====================
+
+    /**
+     * 자료실 목록 페이지
+     */
+    @GetMapping("/resource")
+    public String resourceList(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "") String keyword,
+                               Model model) {
+
+        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
+
+        Page<ResourceListResponseDto> resources;
+        if (keyword.isBlank()) {
+            resources = resourceService.getResourceList(pageable);
+        } else {
+            resources = resourceService.searchResources(keyword, pageable);
+        }
+
+        model.addAttribute("resources", resources);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("breadcrumbItems", createResourceBreadcrumb());
+        model.addAttribute("sidebarMenus", createSupportSidebarMenus());
+        model.addAttribute("currentMenu", "/support/resource");
+
+        return "support/resource-list";
+    }
+
+    /**
+     * 자료 다운로드
+     *
+     * 실제 파일 다운로드 기능 (파일이 존재하는 경우)
+     * 현재는 테스트용으로 다운로드 카운트만 증가하고 목록으로 리다이렉트
+     */
+    @GetMapping("/resource/{id}/download")
+    public ResponseEntity<?> downloadResource(@PathVariable Long id) {
+        try {
+            var resource = resourceService.getResourceForDownload(id);
+
+            // 실제 파일이 존재하는 경우 다운로드 처리
+            Path filePath = Paths.get(resource.getFilePath());
+            var fileResource = new UrlResource(filePath.toUri());
+
+            if (fileResource.exists() && fileResource.isReadable()) {
+                String encodedFileName = URLEncoder.encode(resource.getFileName(), StandardCharsets.UTF_8)
+                        .replaceAll("\\+", "%20");
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFileName)
+                        .body(fileResource);
+            } else {
+                // 파일이 없는 경우 (테스트 데이터) - 목록으로 리다이렉트
+                return ResponseEntity.status(302)
+                        .header(HttpHeaders.LOCATION, "/support/resource")
+                        .build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(302)
+                    .header(HttpHeaders.LOCATION, "/support/resource")
+                    .build();
+        }
+    }
+
     // ==================== 유틸리티 메서드 ====================
 
     /**
@@ -288,6 +359,16 @@ public class SupportController {
         return List.of(
                 Map.of("name", "고객지원", "url", "#"),
                 Map.of("name", currentPageName, "url", currentPageUrl)
+        );
+    }
+
+    /**
+     * 자료실 브레드크럼 생성
+     */
+    private List<Map<String, String>> createResourceBreadcrumb() {
+        return List.of(
+                Map.of("name", "고객지원", "url", "#"),
+                Map.of("name", "자료실", "url", "/support/resource")
         );
     }
 }

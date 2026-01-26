@@ -12,7 +12,7 @@
 <body>
 <main layout:fragment="content">
     <!-- 페이지 배너 -->
-    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '마이데이터 테스트베드 관련 자료를 다운로드하세요')}"></th:block>
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '서비스 이용에 필요한 자료를 제공합니다')}"></th:block>
 
     <!-- 브레드크럼 -->
     <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
@@ -44,9 +44,8 @@
                     <tr>
                         <th style="width: 80px;">번호</th>
                         <th>제목</th>
-                        <th style="width: 120px;">파일크기</th>
+                        <th style="width: 100px;">첨부파일</th>
                         <th style="width: 120px;">등록일</th>
-                        <th style="width: 100px;">다운로드</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,28 +53,18 @@
                     <tr th:each="resource, stat : ${resources.content}">
                         <td th:text="${resources.totalElements - (resources.number * resources.size) - stat.index}">1</td>
                         <td class="title">
-                            <a th:href="@{/support/resource/{id}/download(id=${resource.id})}" 
-                               class="resource-link">
-                                <span class="file-icon">📁</span>
+                            <a th:href="@{/support/resource/{id}(id=${resource.id})}">
                                 <span th:text="${resource.title}">자료 제목</span>
                             </a>
-                            <p class="resource-desc" th:if="${resource.description != null and !resource.description.isEmpty()}" 
-                               th:text="${resource.description}">자료 설명</p>
-                            <span class="file-name" th:text="${resource.fileName}">파일명.pdf</span>
                         </td>
-                        <td th:text="${resource.formattedFileSize}">1.5 MB</td>
-                        <td th:text="${#temporals.format(resource.createdAt, 'yyyy.MM.dd')}">2025.01.17</td>
                         <td>
-                            <a th:href="@{/support/resource/{id}/download(id=${resource.id})}" 
-                               class="btn btn-sm btn-outline download-btn">
-                                <span class="download-icon">⬇</span>
-                                <span th:text="${resource.downloadCount}">0</span>
-                            </a>
+                            <span class="attachment-icon">📎</span>
                         </td>
+                        <td th:text="${#temporals.format(resource.createdAt, 'yyyy-MM-dd')}">2025-01-17</td>
                     </tr>
                     <!-- 자료가 없을 때 -->
                     <tr th:if="${#lists.isEmpty(resources.content)}">
-                        <td colspan="5" class="text-center" style="padding: 40px;">
+                        <td colspan="4" class="text-center" style="padding: 40px;">
                             등록된 자료가 없습니다.
                         </td>
                     </tr>
@@ -90,51 +79,17 @@
 
 <th:block layout:fragment="script">
 <style>
-    /* 자료실 전용 스타일 */
-    .resource-link {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #333;
-        font-weight: 500;
-    }
-    
-    .resource-link:hover {
+    .attachment-icon {
         color: #0d6efd;
-    }
-    
-    .resource-link .file-icon {
         font-size: 1.1rem;
     }
     
-    .resource-desc {
-        margin: 6px 0 4px 0;
-        font-size: 0.85rem;
-        color: #6c757d;
-        line-height: 1.4;
+    .board-table td.title a {
+        color: #333;
     }
     
-    .file-name {
-        display: block;
-        font-size: 0.8rem;
-        color: #868e96;
-        margin-top: 4px;
-    }
-    
-    .download-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 6px 12px;
-    }
-    
-    .download-btn .download-icon {
-        font-size: 0.9rem;
-    }
-    
-    .board-table td.title {
-        text-align: left;
-        padding: 16px;
+    .board-table td.title a:hover {
+        color: #0d6efd;
     }
 </style>
 </th:block>
