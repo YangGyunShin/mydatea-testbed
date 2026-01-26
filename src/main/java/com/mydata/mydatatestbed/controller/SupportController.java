@@ -5,7 +5,9 @@ import com.mydata.mydatatestbed.dto.inquiry.InquiryRequestDto;
 import com.mydata.mydatatestbed.dto.inquiry.InquiryResponseDto;
 import com.mydata.mydatatestbed.dto.notice.NoticeDetailResponseDto;
 import com.mydata.mydatatestbed.dto.notice.NoticeListResponseDto;
+import com.mydata.mydatatestbed.dto.resource.ResourceDetailResponseDto;
 import com.mydata.mydatatestbed.dto.resource.ResourceListResponseDto;
+import com.mydata.mydatatestbed.dto.resource.ResourceNavDto;
 import com.mydata.mydatatestbed.security.CustomUserDetails;
 import com.mydata.mydatatestbed.service.InquiryService;
 import com.mydata.mydatatestbed.service.NoticeService;
@@ -271,17 +273,33 @@ public class SupportController {
     }
 
     /**
+     * 자료실 상세 페이지
+     */
+    @GetMapping("/resource/{id}")
+    public String resourceDetail(@PathVariable Long id, Model model) {
+
+        ResourceDetailResponseDto resource = resourceService.getResourceDetail(id);
+        ResourceNavDto nextResource = resourceService.getNextResource(id);
+        ResourceNavDto prevResource = resourceService.getPrevResource(id);
+
+        model.addAttribute("resource", resource);
+        model.addAttribute("nextResource", nextResource);
+        model.addAttribute("prevResource", prevResource);
+        model.addAttribute("breadcrumbItems", createResourceBreadcrumb());
+        model.addAttribute("sidebarMenus", createSupportSidebarMenus());
+        model.addAttribute("currentMenu", "/support/resource");
+
+        return "support/resource-detail";
+    }
+
+    /**
      * 자료 다운로드
-     *
-     * 실제 파일 다운로드 기능 (파일이 존재하는 경우)
-     * 현재는 테스트용으로 다운로드 카운트만 증가하고 목록으로 리다이렉트
      */
     @GetMapping("/resource/{id}/download")
     public ResponseEntity<?> downloadResource(@PathVariable Long id) {
         try {
             var resource = resourceService.getResourceForDownload(id);
 
-            // 실제 파일이 존재하는 경우 다운로드 처리
             Path filePath = Paths.get(resource.getFilePath());
             var fileResource = new UrlResource(filePath.toUri());
 
@@ -293,9 +311,9 @@ public class SupportController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFileName)
                         .body(fileResource);
             } else {
-                // 파일이 없는 경우 (테스트 데이터) - 목록으로 리다이렉트
+                // 파일이 없는 경우 (테스트 데이터) - 상세 페이지로 리다이렉트
                 return ResponseEntity.status(302)
-                        .header(HttpHeaders.LOCATION, "/support/resource")
+                        .header(HttpHeaders.LOCATION, "/support/resource/" + id)
                         .build();
             }
         } catch (Exception e) {
