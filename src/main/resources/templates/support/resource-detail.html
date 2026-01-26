@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title>자료실</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+        <style>
+            /* 자료실 상세 페이지 스타일 */
+            .resource-detail {
+                border-top: 2px solid #1e3a5f;
+            }
+            
+            .resource-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding: 20px 0;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .resource-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #1a1a1a;
+                margin: 0;
+                flex: 1;
+            }
+            
+            .resource-meta {
+                display: flex;
+                gap: 20px;
+                font-size: 0.9rem;
+                color: #6c757d;
+                flex-shrink: 0;
+            }
+            
+            .resource-content {
+                padding: 30px 0;
+                min-height: 200px;
+                line-height: 1.8;
+                color: #333;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .resource-files {
+                padding: 20px 0;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .resource-files .file-item {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                margin-bottom: 8px;
+            }
+            
+            .resource-files .file-item:last-child {
+                margin-bottom: 0;
+            }
+            
+            .resource-files .file-item a {
+                color: #0d6efd;
+                font-size: 0.95rem;
+            }
+            
+            .resource-files .file-item a:hover {
+                text-decoration: underline;
+            }
+            
+            .resource-files .file-icon {
+                margin-right: 10px;
+                font-size: 1.1rem;
+            }
+            
+            /* 이전글/다음글 네비게이션 */
+            .resource-nav {
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .resource-nav-item {
+                display: flex;
+                align-items: center;
+                padding: 14px 0;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .resource-nav-item:last-child {
+                border-bottom: none;
+            }
+            
+            .resource-nav-label {
+                display: flex;
+                align-items: center;
+                width: 100px;
+                font-weight: 500;
+                color: #495057;
+                flex-shrink: 0;
+            }
+            
+            .resource-nav-label .arrow {
+                margin-right: 8px;
+            }
+            
+            .resource-nav-link {
+                color: #333;
+                flex: 1;
+            }
+            
+            .resource-nav-link:hover {
+                color: #0d6efd;
+            }
+            
+            .resource-nav-link.disabled {
+                color: #adb5bd;
+                pointer-events: none;
+            }
+            
+            /* 버튼 영역 */
+            .resource-actions {
+                display: flex;
+                justify-content: center;
+                padding: 30px 0;
+            }
+            
+            .btn-list {
+                padding: 12px 40px;
+                font-size: 1rem;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('고객지원', '서비스 이용에 필요한 자료를 제공합니다')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 -->
+        <th:block th:replace="~{layout/sidebar :: sidebar('고객지원', ${sidebarMenus}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title">자료실</h2>
+
+            <!-- 자료 상세 -->
+            <div class="resource-detail">
+                <!-- 헤더: 제목, 날짜, 조회수 -->
+                <div class="resource-header">
+                    <h3 class="resource-title" th:text="${resource.title}">자료 제목</h3>
+                    <div class="resource-meta">
+                        <span th:text="${#temporals.format(resource.createdAt, 'yyyy-MM-dd')}">2025-01-20</span>
+                        <span th:text="${resource.viewCount}">123</span>
+                    </div>
+                </div>
+                
+                <!-- 본문 내용 -->
+                <div class="resource-content">
+                    <p th:text="${resource.content}" th:if="${resource.content != null and !resource.content.isEmpty()}">자료 설명 내용</p>
+                    <p th:if="${resource.content == null or resource.content.isEmpty()}">등록된 설명이 없습니다.</p>
+                </div>
+                
+                <!-- 첨부파일 -->
+                <div class="resource-files" th:if="${resource.fileName != null}">
+                    <div class="file-item">
+                        <span class="file-icon">📎</span>
+                        <a th:href="@{/support/resource/{id}/download(id=${resource.id})}" th:text="${resource.fileName}">파일명.pdf</a>
+                    </div>
+                </div>
+                
+                <!-- 이전글/다음글 네비게이션 -->
+                <div class="resource-nav">
+                    <div class="resource-nav-item">
+                        <span class="resource-nav-label">
+                            <span class="arrow">△</span> 다음 글
+                        </span>
+                        <a th:if="${nextResource != null}" 
+                           th:href="@{/support/resource/{id}(id=${nextResource.id})}" 
+                           th:text="${nextResource.title}"
+                           class="resource-nav-link">다음 글 제목</a>
+                        <span th:if="${nextResource == null}" class="resource-nav-link disabled">다음 글이 없습니다.</span>
+                    </div>
+                    <div class="resource-nav-item">
+                        <span class="resource-nav-label">
+                            <span class="arrow">▽</span> 이전 글
+                        </span>
+                        <a th:if="${prevResource != null}" 
+                           th:href="@{/support/resource/{id}(id=${prevResource.id})}" 
+                           th:text="${prevResource.title}"
+                           class="resource-nav-link">이전 글 제목</a>
+                        <span th:if="${prevResource == null}" class="resource-nav-link disabled">이전 글이 없습니다.</span>
+                    </div>
+                </div>
+                
+                <!-- 목록 버튼 -->
+                <div class="resource-actions">
+                    <a th:href="@{/support/resource}" class="btn btn-secondary btn-list">목록</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -40,6 +40,12 @@ public class Resource extends BaseTimeEntity {
     private Long fileSize;
 
     /**
+     * 조회수
+     */
+    @Column(nullable = false)
+    private int viewCount;
+
+    /**
      * 다운로드 횟수
      */
     @Column(nullable = false)
@@ -60,11 +66,19 @@ public class Resource extends BaseTimeEntity {
         this.filePath = filePath;
         this.fileName = fileName;
         this.fileSize = fileSize;
+        this.viewCount = 0;
         this.downloadCount = 0;
         this.author = author;
     }
 
     // === 비즈니스 메서드 === //
+
+    /**
+     * 조회수 증가
+     */
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
 
     /**
      * 다운로드 횟수 증가
