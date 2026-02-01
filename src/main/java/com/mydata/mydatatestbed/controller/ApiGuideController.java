@@ -15,18 +15,40 @@ public class ApiGuideController {
     /**
      * 데이터 표준 API 기본규격
      */
-    @GetMapping
+    @GetMapping("/base")
     public String basicSpec(Model model) {
         model.addAttribute("sidebarMenus", getSidebarMenus());
-        model.addAttribute("currentMenu", "/api-guide");
+        model.addAttribute("currentMenu", "/api-guide/base");
         model.addAttribute("breadcrumbItems", getBreadcrumbItems("데이터 표준 API 기본규격"));
         return "api-guide/basic-spec";
+    }
+
+    /**
+     * 데이터 표준 API 인증규격
+     */
+    @GetMapping("/auth")
+    public String authSpec(Model model) {
+        model.addAttribute("sidebarMenus", getSidebarMenus());
+        model.addAttribute("currentMenu", "/api-guide/auth");
+        model.addAttribute("breadcrumbItems", getBreadcrumbItems("데이터 표준 API 인증규격"));
+        return "api-guide/auth-spec";
+    }
+
+    /**
+     * 마이데이터 참여자별 API 처리 절차
+     */
+    @GetMapping("/process")
+    public String processSpec(Model model) {
+        model.addAttribute("sidebarMenus", getSidebarMenus());
+        model.addAttribute("currentMenu", "/api-guide/process");
+        model.addAttribute("breadcrumbItems", getBreadcrumbItems("마이데이터 참여자별 API 처리 절차"));
+        return "api-guide/process-spec";
     }
 
     // API가이드 사이드바 메뉴 (하위 그룹 포함)
     private List<Map<String, String>> getSidebarMenus() {
         return List.of(
-                Map.of("name", "데이터 표준 API 기본규격", "url", "/api-guide"),
+                Map.of("name", "데이터 표준 API 기본규격", "url", "/api-guide/base"),
                 Map.of("name", "데이터 표준 API 인증규격", "url", "/api-guide/auth"),
                 Map.of("name", "마이데이터 참여자별 API 처리 절차", "url", "/api-guide/process"),
                 Map.of("name", "마이데이터 인증 API 규격", "url", "/api-guide/auth-api"),
