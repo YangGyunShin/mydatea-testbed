@@ -1,7 +1,7 @@
 # 📊 프로젝트 진행 상황
 
-> **마지막 업데이트**: 2025-01-31  
-> **현재 Phase**: Phase 3 완료 ✅ → Phase 4 예정
+> **마지막 업데이트**: 2026-02-01  
+> **현재 Phase**: Phase 4-1 진행 중 (데이터 표준 API 완료, 마이데이터 인증 API 규격 예정)
 
 ---
 
@@ -11,7 +11,7 @@
 Phase 1: 기본 구조      [██████████] 100% ✅
 Phase 2: 회원 기능      [██████████] 100% ✅
 Phase 3: 게시판 기능    [██████████] 100% ✅
-Phase 4: 핵심 기능      [░░░░░░░░░░]   0% ⏳
+Phase 4: 핵심 기능      [██░░░░░░░░]  20% 🔄
 Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 ```
 
@@ -47,92 +47,64 @@ Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 
 ### Phase 3: 게시판 기능 ✅
 
-#### 3-1. 공지사항 (Notice) ✅
+| 기능 | 상태 | 주요 파일 |
+|------|------|----------|
+| 3-1. 공지사항 (Notice) | ✅ | `Notice`, `NoticeRepository`, `NoticeService` |
+| 3-2. FAQ | ✅ | `Faq`, `FaqCategory`, `FaqRepository`, `FaqService` |
+| 3-3. 문의하기 (Inquiry) | ✅ | `Inquiry`, `InquiryStatus`, `InquiryRepository`, `InquiryService` |
+| 3-4. 자료실 (Resource) | ✅ | `Resource`, `ResourceRepository`, `ResourceService` |
+| 3-5. 자유게시판 (Board) | ✅ | `Board`, `BoardRepository`, `BoardService`, `FileService` |
 
-| 항목 | 파일 |
-|------|------|
-| Entity | `Notice.java` |
-| Repository | `NoticeRepository.java` |
-| DTO | `NoticeListResponseDto`, `NoticeDetailResponseDto` |
-| Mapper | `NoticeMapper.java` |
-| Service | `NoticeService`, `NoticeServiceImpl` |
-| Controller | `SupportController` (Notice 부분) |
-| Templates | `notice-list.html`, `notice-detail.html` |
+### Phase 4-1: API 가이드 - 데이터 표준 API ✅
 
-#### 3-2. FAQ ✅
+| 항목 | 파일 | URL |
+|------|------|-----|
+| **Controller** | `ApiGuideController.java` | `/api-guide/**` |
+| **CSS** | `api-guide.css` | - |
+| **기본규격** | `basic-spec.html` | `/api-guide/base` |
+| **인증규격** | `auth-spec.html` | `/api-guide/auth` |
+| **참여자별 API 처리 절차** | `process-spec.html` | `/api-guide/process` |
 
-| 항목 | 파일 |
-|------|------|
-| Entity | `Faq.java` |
-| Enum | `FaqCategory.java` |
-| Repository | `FaqRepository.java` |
-| DTO | `FaqResponseDto.java` |
-| Mapper | `FaqMapper.java` |
-| Service | `FaqService`, `FaqServiceImpl` |
-| Controller | `SupportController` (FAQ 부분) |
-| Templates | `faq.html` |
-| 초기 데이터 | `data.sql` |
-
-#### 3-3. 문의하기 (Inquiry) ✅
-
-| 항목 | 파일 |
-|------|------|
-| Entity | `Inquiry.java` |
-| Enum | `InquiryStatus.java` (WAITING, COMPLETED) |
-| Repository | `InquiryRepository.java` |
-| DTO | `InquiryRequestDto`, `InquiryResponseDto`, `InquiryListResponseDto` |
-| Mapper | `InquiryMapper.java` |
-| Service | `InquiryService`, `InquiryServiceImpl` |
-| Controller | `SupportController` (Inquiry 부분) |
-| Templates | `inquiry-form.html`, `inquiry-list.html`, `inquiry-detail.html` |
-
-#### 3-4. 자료실 (Resource) ✅
-
-| 항목 | 파일 |
-|------|------|
-| Entity | `Resource.java` |
-| Repository | `ResourceRepository.java` |
-| DTO | `ResourceListResponseDto`, `ResourceDetailResponseDto`, `ResourceNavDto` |
-| Mapper | `ResourceMapper.java` |
-| Service | `ResourceService`, `ResourceServiceImpl` |
-| Controller | `SupportController` (Resource 부분) |
-| Templates | `resource-list.html`, `resource-detail.html` |
-| 초기 데이터 | `data.sql` (7건의 테스트 데이터) |
-
-#### 3-5. 자유게시판 (Board) ✅
-
-| 항목 | 파일 |
-|------|------|
-| Entity | `Board.java` |
-| Repository | `BoardRepository.java` |
-| DTO | `BoardRequestDto`, `BoardListResponseDto`, `BoardDetailResponseDto` |
-| Mapper | `BoardMapper.java` |
-| Service | `BoardService`, `BoardServiceImpl`, `FileService`, `FileServiceImpl` |
-| Util | `FileSizeFormatter.java` |
-| Controller | `SupportController` (Board 부분) |
-| Templates | `board-list.html`, `board-detail.html`, `board-write.html` |
-
-**주요 기능:**
-- 게시글 CRUD (작성/조회/수정/삭제)
-- 파일 업로드/다운로드 (최대 10MB)
-- 검색 (전체/제목/작성자)
-- 페이징
-- 권한 체크 (작성자 본인 또는 관리자만 수정/삭제)
-- 조회수 자동 증가
+**ApiGuideController 사이드바 구조:**
+```
+API가이드 (사이드바 제목)
+├── 데이터 표준 API 기본규격     → /api-guide/base     ✅
+├── 데이터 표준 API 인증규격     → /api-guide/auth     ✅
+├── 마이데이터 참여자별 API 처리 절차 → /api-guide/process ✅
+├── 마이데이터 인증 API 규격     → /cert-api           ⬜ (별도 컨트롤러)
+├── 마이데이터 지원 API 규격     → /support-api        ⬜ (별도 컨트롤러)
+└── 마이데이터 정보제공 API 규격 → /info-api           ⬜ (별도 컨트롤러)
+```
 
 ---
 
 ## 📝 남은 작업
 
-### Phase 4: 핵심 기능 (예정) ⬜
+### Phase 4-1 계속: API 가이드 - 나머지 섹션 ⬜
 
-| 항목 | 상태 | 비고 |
-|------|------|------|
-| API 가이드 페이지 | ⬜ | 정적 컨텐츠 |
-| 테스트베드 기능 | ⬜ | 서비스/API 테스트 |
-| 적합성 심사 기능 | ⬜ | 기능적합성/보안취약점 |
+> **중요**: 마이데이터 인증/지원/정보제공 API 규격은 각각 **별도 컨트롤러 + 자체 사이드바**를 가진 독립 섹션
 
-### Phase 5: 완성도 (예정) ⬜
+| 항목 | 컨트롤러 | URL 패턴 | 사이드바 메뉴 | 상태 |
+|------|---------|----------|-------------|------|
+| 마이데이터 인증 API 규격 | `CertApiController` | `/cert-api/**` | 개별인증 API, 통합인증 API | ⬜ 다음 작업 |
+| 마이데이터 지원 API 규격 | `SupportApiController` | `/support-api/**` | (스캔 필요) | ⬜ |
+| 마이데이터 정보제공 API 규격 | `InfoApiController` | `/info-api/**` | (스캔 필요) | ⬜ |
+
+### Phase 4-2: 테스트베드 기능 ⬜
+
+| URL | 설명 |
+|-----|------|
+| `/testbed/service` | 마이데이터 서비스 테스트 |
+| `/testbed/api` | API 서버 테스트 |
+
+### Phase 4-3: 적합성 심사 ⬜
+
+| URL | 설명 |
+|-----|------|
+| `/conformance/functional` | 기능적합성 심사 |
+| `/conformance/security` | 보안취약점 결과 점검 |
+
+### Phase 5: 완성도 ⬜
 
 | 항목 | 상태 |
 |------|------|
@@ -157,7 +129,8 @@ src/main/java/com/mydata/mydatatestbed/
 ├── controller/
 │   ├── MainController.java
 │   ├── MemberController.java
-│   └── SupportController.java
+│   ├── SupportController.java
+│   └── ApiGuideController.java          # ✅ Phase 4-1 추가
 │
 ├── entity/
 │   ├── BaseTimeEntity.java
@@ -166,7 +139,7 @@ src/main/java/com/mydata/mydatatestbed/
 │   ├── Faq.java
 │   ├── Inquiry.java
 │   ├── Resource.java
-│   ├── Board.java                       # ✅ Phase 3-5 추가
+│   ├── Board.java
 │   └── Enum/
 │       ├── MemberRole.java
 │       ├── FaqCategory.java
@@ -184,29 +157,15 @@ src/main/java/com/mydata/mydatatestbed/
 │   ├── FaqRepository.java
 │   ├── InquiryRepository.java
 │   ├── ResourceRepository.java
-│   └── BoardRepository.java             # ✅ Phase 3-5 추가
+│   └── BoardRepository.java
 │
 ├── dto/
 │   ├── member/
-│   │   ├── MemberSignupRequestDto.java
-│   │   └── MemberResponseDto.java
 │   ├── notice/
-│   │   ├── NoticeListResponseDto.java
-│   │   └── NoticeDetailResponseDto.java
 │   ├── faq/
-│   │   └── FaqResponseDto.java
 │   ├── inquiry/
-│   │   ├── InquiryRequestDto.java
-│   │   ├── InquiryResponseDto.java
-│   │   └── InquiryListResponseDto.java
 │   ├── resource/
-│   │   ├── ResourceListResponseDto.java
-│   │   ├── ResourceDetailResponseDto.java
-│   │   └── ResourceNavDto.java
-│   └── board/                            # ✅ Phase 3-5 추가
-│       ├── BoardRequestDto.java
-│       ├── BoardListResponseDto.java
-│       └── BoardDetailResponseDto.java
+│   └── board/
 │
 ├── mapper/
 │   ├── MemberMapper.java
@@ -214,28 +173,13 @@ src/main/java/com/mydata/mydatatestbed/
 │   ├── FaqMapper.java
 │   ├── InquiryMapper.java
 │   ├── ResourceMapper.java
-│   └── BoardMapper.java                  # ✅ Phase 3-5 추가
+│   └── BoardMapper.java
 │
 ├── service/
-│   ├── MemberService.java
-│   ├── EmailService.java
-│   ├── NoticeService.java
-│   ├── FaqService.java
-│   ├── InquiryService.java
-│   ├── ResourceService.java
-│   ├── BoardService.java                 # ✅ Phase 3-5 추가
-│   ├── FileService.java                  # ✅ Phase 3-5 추가
-│   └── impl/
-│       ├── MemberServiceImpl.java
-│       ├── EmailServiceImpl.java
-│       ├── NoticeServiceImpl.java
-│       ├── FaqServiceImpl.java
-│       ├── InquiryServiceImpl.java
-│       ├── ResourceServiceImpl.java
-│       ├── BoardServiceImpl.java         # ✅ Phase 3-5 추가
-│       └── FileServiceImpl.java          # ✅ Phase 3-5 추가
+│   ├── impl/ (각 ServiceImpl 포함)
+│   └── ... (각 Service 인터페이스)
 │
-├── util/                                  # ✅ Phase 3-5 추가
+├── util/
 │   └── FileSizeFormatter.java
 │
 ├── security/
@@ -263,34 +207,25 @@ src/main/resources/
 │   │   └── index.html
 │   ├── member/
 │   │   ├── login.html
-│   │   ├── signup-step1-terms.html
-│   │   ├── signup-step2-phone.html
-│   │   ├── signup-step3-info.html
-│   │   ├── signup-step4-email.html
+│   │   ├── signup-step1-terms.html ~ step4-email.html
 │   │   ├── verify-email-success.html
 │   │   └── verify-email-failed.html
 │   ├── support/
-│   │   ├── notice-list.html
-│   │   ├── notice-detail.html
+│   │   ├── notice-list.html, notice-detail.html
 │   │   ├── faq.html
-│   │   ├── inquiry-form.html
-│   │   ├── inquiry-list.html
-│   │   ├── inquiry-detail.html
-│   │   ├── resource-list.html
-│   │   ├── resource-detail.html
-│   │   ├── board-list.html              # ✅ Phase 3-5 추가
-│   │   ├── board-detail.html            # ✅ Phase 3-5 추가
-│   │   └── board-write.html             # ✅ Phase 3-5 추가
+│   │   ├── inquiry-form.html, inquiry-list.html, inquiry-detail.html
+│   │   ├── resource-list.html, resource-detail.html
+│   │   ├── board-list.html, board-detail.html, board-write.html
+│   ├── api-guide/                        # ✅ Phase 4-1 추가
+│   │   ├── basic-spec.html              # 데이터 표준 API 기본규격
+│   │   ├── auth-spec.html               # 데이터 표준 API 인증규격
+│   │   └── process-spec.html            # 마이데이터 참여자별 API 처리 절차
 │   └── error/
 └── static/
     ├── css/
-    │   ├── common.css
-    │   ├── header.css
-    │   ├── footer.css
-    │   ├── sidebar.css
-    │   ├── main.css
-    │   ├── sub-page.css
-    │   └── form.css
+    │   ├── common.css, header.css, footer.css
+    │   ├── sidebar.css, main.css, sub-page.css, form.css
+    │   └── api-guide.css                 # ✅ Phase 4-1 추가
     └── js/
         ├── common.js
         └── main.js
@@ -315,9 +250,13 @@ src/main/resources/
 | `/support/resource` | GET | 자료실 목록 |
 | `/support/resource/{id}` | GET | 자료실 상세 |
 | `/support/resource/{id}/download` | GET | 자료 다운로드 |
-| `/support/board` | GET | 자유게시판 목록 ✅ |
-| `/support/board/{id}` | GET | 자유게시판 상세 ✅ |
-| `/support/board/{id}/download` | GET | 첨부파일 다운로드 ✅ |
+| `/support/board` | GET | 자유게시판 목록 |
+| `/support/board/{id}` | GET | 자유게시판 상세 |
+| `/support/board/{id}/download` | GET | 첨부파일 다운로드 |
+| `/api-guide` | GET | → `/api-guide/base` 리다이렉트 |
+| `/api-guide/base` | GET | 데이터 표준 API 기본규격 ✅ |
+| `/api-guide/auth` | GET | 데이터 표준 API 인증규격 ✅ |
+| `/api-guide/process` | GET | 참여자별 API 처리 절차 ✅ |
 
 ### 인증 필요 URL
 
@@ -326,9 +265,9 @@ src/main/resources/
 | `/support/inquiry` | GET/POST | 문의 작성 폼/등록 |
 | `/support/inquiry/list` | GET | 내 문의 목록 |
 | `/support/inquiry/{id}` | GET | 문의 상세 |
-| `/support/board/write` | GET/POST | 게시글 작성 ✅ |
-| `/support/board/{id}/edit` | GET/POST | 게시글 수정 (작성자/관리자) ✅ |
-| `/support/board/{id}/delete` | POST | 게시글 삭제 (작성자/관리자) ✅ |
+| `/support/board/write` | GET/POST | 게시글 작성 |
+| `/support/board/{id}/edit` | GET/POST | 게시글 수정 |
+| `/support/board/{id}/delete` | POST | 게시글 삭제 |
 
 ---
 
