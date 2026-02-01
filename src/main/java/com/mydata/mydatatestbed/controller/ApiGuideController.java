@@ -13,6 +13,14 @@ import java.util.Map;
 public class ApiGuideController {
 
     /**
+     * /api-guide 접속 시 기본규격 페이지로 리다이렉트
+     */
+    @GetMapping
+    public String redirectToBase() {
+        return "redirect:/api-guide/base";
+    }
+
+    /**
      * 데이터 표준 API 기본규격
      */
     @GetMapping("/base")
