@@ -134,8 +134,8 @@
     display: block;
     padding: 14px 20px;
     font-size: 0.9375rem;
-    font-weight: 500;
-    color: #495057;
+    font-weight: 700;
+    color: #333;
     text-decoration: none;
     background-color: #fff;
     transition: all 0.2s;
@@ -172,8 +172,8 @@
 
 .sidebar-group-menu li a {
     display: block;
-    padding: 12px 20px 12px 28px;
-    font-size: 0.9375rem;
+    padding: 10px 20px 10px 28px;
+    font-size: 0.8125rem;
     color: #495057;
     text-decoration: none;
     background-color: #eef3f9;
