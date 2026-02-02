@@ -12,60 +12,35 @@ import java.util.Map;
 @RequestMapping("/api-guide")
 public class ApiGuideController {
 
-    /**
-     * /api-guide 접속 시 기본규격 페이지로 리다이렉트
-     */
     @GetMapping
     public String redirectToBase() {
         return "redirect:/api-guide/base";
     }
 
-    /**
-     * 데이터 표준 API 기본규격
-     */
     @GetMapping("/base")
     public String basicSpec(Model model) {
-        model.addAttribute("sidebarMenus", getSidebarMenus());
+        model.addAttribute("activeGroup", "guide");
         model.addAttribute("currentMenu", "/api-guide/base");
         model.addAttribute("breadcrumbItems", getBreadcrumbItems("데이터 표준 API 기본규격"));
         return "api-guide/basic-spec";
     }
 
-    /**
-     * 데이터 표준 API 인증규격
-     */
     @GetMapping("/auth")
     public String authSpec(Model model) {
-        model.addAttribute("sidebarMenus", getSidebarMenus());
+        model.addAttribute("activeGroup", "guide");
         model.addAttribute("currentMenu", "/api-guide/auth");
         model.addAttribute("breadcrumbItems", getBreadcrumbItems("데이터 표준 API 인증규격"));
         return "api-guide/auth-spec";
     }
 
-    /**
-     * 마이데이터 참여자별 API 처리 절차
-     */
     @GetMapping("/process")
     public String processSpec(Model model) {
-        model.addAttribute("sidebarMenus", getSidebarMenus());
+        model.addAttribute("activeGroup", "guide");
         model.addAttribute("currentMenu", "/api-guide/process");
         model.addAttribute("breadcrumbItems", getBreadcrumbItems("마이데이터 참여자별 API 처리 절차"));
         return "api-guide/process-spec";
     }
 
-    // API가이드 사이드바 메뉴 (하위 그룹 포함)
-    private List<Map<String, String>> getSidebarMenus() {
-        return List.of(
-                Map.of("name", "데이터 표준 API 기본규격", "url", "/api-guide/base"),
-                Map.of("name", "데이터 표준 API 인증규격", "url", "/api-guide/auth"),
-                Map.of("name", "마이데이터 참여자별 API 처리 절차", "url", "/api-guide/process"),
-                Map.of("name", "마이데이터 인증 API 규격", "url", "/cert-api"),
-                Map.of("name", "마이데이터 지원 API 규격", "url", "/support-api"),
-                Map.of("name", "마이데이터 정보제공 API 규격", "url", "/info-api")
-        );
-    }
-
-    // 브레드크럼 생성
     private List<Map<String, String>> getBreadcrumbItems(String current) {
         return List.of(
                 Map.of("name", "홈", "url", "/"),

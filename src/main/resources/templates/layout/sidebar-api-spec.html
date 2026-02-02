@@ -2,16 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--
     API 규격 섹션용 아코디언 사이드바
-    - activeGroup: 현재 활성 그룹 ('api-guide', 'cert', 'support', 'info')
+    - activeGroup: 현재 활성 그룹 ('guide', 'cert', 'support', 'info')
     - currentMenu: 현재 활성 메뉴 URL
 -->
 <th:block th:fragment="sidebar-api-spec(activeGroup, currentMenu)">
 <aside class="sidebar sidebar-accordion">
 
-    <!-- API가이드 (데이터 표준 API) -->
-    <div class="sidebar-group" th:classappend="${activeGroup == 'api-guide'} ? ' active' : ''">
+    <!-- API가이드 -->
+    <div class="sidebar-group" th:classappend="${activeGroup == 'guide'} ? ' active' : ''">
         <a th:href="@{/api-guide}" class="sidebar-group-title">API가이드</a>
-        <ul class="sidebar-group-menu" th:if="${activeGroup == 'api-guide'}">
+        <ul class="sidebar-group-menu" th:if="${activeGroup == 'guide'}">
             <li th:classappend="${currentMenu == '/api-guide/base'} ? ' active' : ''">
                 <a th:href="@{/api-guide/base}">데이터 표준 API 기본규격</a>
             </li>
@@ -40,22 +40,13 @@
     <!-- 마이데이터 지원 API 규격 -->
     <div class="sidebar-group" th:classappend="${activeGroup == 'support'} ? ' active' : ''">
         <a th:href="@{/support-api}" class="sidebar-group-title">마이데이터 지원 API 규격</a>
-        <!--
-        <ul class="sidebar-group-menu" th:if="${activeGroup == 'support'}">
-            <li><a th:href="@{/support-api/...}">하위 메뉴</a></li>
-        </ul>
-        -->
     </div>
 
     <!-- 마이데이터 정보제공 API 규격 -->
     <div class="sidebar-group" th:classappend="${activeGroup == 'info'} ? ' active' : ''">
         <a th:href="@{/info-api}" class="sidebar-group-title">마이데이터 정보제공 API 규격</a>
-        <!--
-        <ul class="sidebar-group-menu" th:if="${activeGroup == 'info'}">
-            <li><a th:href="@{/info-api/...}">하위 메뉴</a></li>
-        </ul>
-        -->
     </div>
+
 </aside>
 </th:block>
 </html>
