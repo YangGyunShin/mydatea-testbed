@@ -59,9 +59,9 @@ public class ApiGuideController {
                 Map.of("name", "데이터 표준 API 기본규격", "url", "/api-guide/base"),
                 Map.of("name", "데이터 표준 API 인증규격", "url", "/api-guide/auth"),
                 Map.of("name", "마이데이터 참여자별 API 처리 절차", "url", "/api-guide/process"),
-                Map.of("name", "마이데이터 인증 API 규격", "url", "/api-guide/auth-api"),
-                Map.of("name", "마이데이터 지원 API 규격", "url", "/api-guide/support-api"),
-                Map.of("name", "마이데이터 정보제공 API 규격", "url", "/api-guide/info-api")
+                Map.of("name", "마이데이터 인증 API 규격", "url", "/cert-api"),
+                Map.of("name", "마이데이터 지원 API 규격", "url", "/support-api"),
+                Map.of("name", "마이데이터 정보제공 API 규격", "url", "/info-api")
         );
     }
 
