@@ -48,7 +48,9 @@ Password: (비워두기)
 | **자료실** | 목록/상세, 이전글/다음글, 파일 다운로드 | ✅ 완료 |
 | **자유게시판** | CRUD, 파일 업로드/다운로드, 권한 체크 | ✅ 완료 |
 | **API가이드** | 데이터 표준 API 기본/인증규격, 처리절차 | ✅ 완료 |
-| **인증 API 규격** | 개별인증/통합인증 API 상세 스펙 | 🔄 진행 중 |
+| **인증 API 규격** | 개별인증 API (4개), 통합인증 API (9개) | ✅ 완료 |
+| **지원 API 규격** | 지원 API 상세 스펙 | 🔄 진행 예정 |
+| **정보제공 API 규격** | 정보제공 API 상세 스펙 | ⏳ 예정 |
 | **테스트베드** | API 테스트 환경 | ⏳ 예정 |
 | **적합성 심사** | 기능적합성/보안취약점 점검 | ⏳ 예정 |
 
@@ -81,7 +83,7 @@ Password: (비워두기)
 ```
 src/main/java/com/mydata/mydatatestbed/
 ├── config/          # SecurityConfig, WebConfig, AuditConfig
-├── controller/      # MainController, MemberController, SupportController, ApiGuideController
+├── controller/      # Main, Member, Support, ApiGuide, CertApi Controllers
 ├── entity/          # Member, Notice, Faq, Inquiry, Resource, Board + enums
 ├── vo/              # Email, Password, Phone (Value Objects)
 ├── repository/      # JPA Repositories
@@ -94,11 +96,12 @@ src/main/java/com/mydata/mydatatestbed/
 
 src/main/resources/
 ├── templates/       # Thymeleaf 템플릿
-│   ├── layout/      # 레이아웃 (header, footer, sidebar)
+│   ├── layout/      # 레이아웃 (header, footer, sidebar, sidebar-api-spec)
 │   ├── fragments/   # 공통 조각 (breadcrumb, pagination)
 │   ├── member/      # 회원 (로그인, 회원가입)
 │   ├── support/     # 고객지원 (notice, faq, inquiry, resource, board)
-│   └── api-guide/   # API가이드 (basic-spec, auth-spec, process-spec)
+│   ├── api-guide/   # API가이드 (basic-spec, auth-spec, process-spec)
+│   └── cert-api/    # 인증 API 규격 (individual-api, integrated-api)
 ├── static/          # CSS, JS, Images
 ├── application.yml  # 설정
 └── data.sql         # 초기 데이터 (FAQ, Resource)
@@ -126,6 +129,8 @@ src/main/resources/
 | `/api-guide/base` | 데이터 표준 API 기본규격 |
 | `/api-guide/auth` | 데이터 표준 API 인증규격 |
 | `/api-guide/process` | 참여자별 API 처리 절차 |
+| `/cert-api/individual` | 개별인증 API (4개 API 스펙) |
+| `/cert-api/integrated` | 통합인증 API (9개 API 스펙) |
 
 ### 인증 필요 URL
 
@@ -144,7 +149,7 @@ src/main/resources/
 Phase 1: 기본 구조      [██████████] 100% ✅
 Phase 2: 회원 기능      [██████████] 100% ✅
 Phase 3: 게시판 기능    [██████████] 100% ✅
-Phase 4: 핵심 기능      [██░░░░░░░░]  20% 🔄
+Phase 4: 핵심 기능      [████░░░░░░]  40% 🔄
 Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 ```
 

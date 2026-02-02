@@ -14,6 +14,7 @@
 - [데이터베이스 관련](#데이터베이스-관련)
 - [Controller 관련](#controller-관련)
 - [파일 업로드 관련](#파일-업로드-관련)
+- [사이드바/레이아웃 관련](#사이드바레이아웃-관련)
 
 ---
 
@@ -832,6 +833,130 @@ file.transferTo(filePath.toFile());  // 절대 경로면 정상 동작
 - 파일 저장 시 **항상 절대 경로** 사용
 - `.toAbsolutePath().normalize()` 패턴 적용
 - 상대 경로(`./uploads`)는 서블릿 컨테이너에 따라 해석이 달라질 수 있음
+
+---
+
+## 사이드바/레이아웃 관련
+
+### 20. 사이드바 템플릿과 컨트롤러 변수 불일치로 세부항목 미표시
+
+**증상**
+- API 가이드 페이지에서 사이드바에 세부 항목(기본규격, 인증규격, 처리절차)이 표시되지 않음
+- 사이드바에 상위 그룹(API가이드, 마이데이터 인증 API 규격 등)만 나열됨
+
+**원인**
+- HTML 템플릿에서 아코디언 사이드바(`sidebar-api-spec`)를 사용하면서 `activeGroup` 변수를 기대
+- 컨트롤러에서는 일반 사이드바(`sidebar`)용 `sidebarMenus` 변수를 전달
+- 템플릿과 컨트롤러 사이의 변수명 불일치로 아코디언이 동작하지 않음
+
+```html
+<!-- 템플릿: activeGroup 기대 -->
+<th:block th:replace="~{layout/sidebar-api-spec :: sidebar-api-spec(${activeGroup}, ${currentMenu})}"></th:block>
+```
+
+```java
+// 컨트롤러: sidebarMenus 전달 (불일치!)
+model.addAttribute("sidebarMenus", getSidebarMenus());
+```
+
+**해결 방법**
+컨트롤러를 `activeGroup` 방식으로 통일:
+
+```java
+// ✅ 올바른 코드
+model.addAttribute("activeGroup", "guide");  // 또는 "cert", "support", "info"
+model.addAttribute("currentMenu", "/api-guide/base");
+```
+
+**교훈**
+- 사이드바 종류에 따라 필요한 변수가 다름:
+  - 일반 사이드바(`sidebar.html`): `sidebarMenus` (List), `currentMenu` (String)
+  - 아코디언 사이드바(`sidebar-api-spec.html`): `activeGroup` (String), `currentMenu` (String)
+- 템플릿 변경 시 컨트롤러의 Model 변수도 함께 수정해야 함
+- 여러 페이지에서 동일한 사이드바를 쓸 때는 **모든 컨트롤러가 같은 방식**으로 변수를 전달해야 함
+
+---
+
+### 21. 아코디언 사이드바에 특정 그룹 누락
+
+**증상**
+- API 가이드 페이지 접속 시 사이드바에 "API가이드" 그룹이 없음
+- 마이데이터 인증/지원/정보제공 API 규격 그룹만 표시됨
+- API 가이드의 하위 메뉴(기본규격, 인증규격, 처리절차)가 보이지 않음
+
+**원인**
+- `sidebar-api-spec.html`에 "API가이드" 그룹(`activeGroup='guide'`)이 정의되지 않음
+- 인증 API 규격용으로 사이드바를 만들면서 API 가이드 그룹 추가를 누락
+
+**해결 방법**
+`sidebar-api-spec.html`에 API가이드 그룹을 최상단에 추가:
+
+```html
+<!-- API가이드 -->
+<div class="sidebar-group" th:classappend="${activeGroup == 'guide'} ? ' active' : ''">
+    <a th:href="@{/api-guide}" class="sidebar-group-title">API가이드</a>
+    <ul class="sidebar-group-menu" th:if="${activeGroup == 'guide'}">
+        <li th:classappend="${currentMenu == '/api-guide/base'} ? ' active' : ''">
+            <a th:href="@{/api-guide/base}">데이터 표준 API 기본규격</a>
+        </li>
+        <!-- ... -->
+    </ul>
+</div>
+```
+
+**교훈**
+- 아코디언 사이드바는 모든 관련 페이지에서 공유하므로, **모든 그룹을 빠짐없이 정의**해야 함
+- 새로운 섹션 추가 시 사이드바에 해당 그룹도 함께 추가할 것
+- 사이드바 수정 후 관련 **모든 페이지**에서 정상 동작하는지 확인 필요
+
+---
+
+### 22. 상위 항목과 세부 항목의 시각적 구분 부족
+
+**증상**
+- 아코디언 사이드바에서 상위 그룹 제목과 세부 메뉴 항목이 동일한 스타일로 표시
+- 어떤 항목이 상위 카테고리이고 어떤 항목이 하위 메뉴인지 구분하기 어려움
+
+**원인**
+- `.sidebar-group-title`과 `.sidebar-group-menu li a`의 배경색, 글자 크기, 굵기가 동일
+- 시각적 계층 구조(visual hierarchy)가 부족
+
+**해결 방법**
+`sidebar.css`에서 상위/세부 항목 스타일 차별화:
+
+```css
+/* 상위 항목: 볼드, 진한 색상 */
+.sidebar-group-title {
+    font-weight: 700;
+    color: #333;
+    background-color: #fff;
+}
+
+/* 세부 항목: 작은 글자, 연한 배경, 왼쪽 보더 */
+.sidebar-group-menu {
+    background-color: #eef3f9;
+    border-left: 3px solid #0d6efd;
+}
+
+.sidebar-group-menu li a {
+    font-size: 0.8125rem;  /* 13px, 상위보다 작게 */
+    background-color: #eef3f9;
+}
+```
+
+**적용된 차이점:**
+
+| 구분 | 상위 항목 | 세부 항목 |
+|------|----------|----------|
+| 글자 굵기 | `font-weight: 700` (볼드) | 기본 (400) |
+| 글자 크기 | `0.9375rem` (15px) | `0.8125rem` (13px) |
+| 배경색 | `#fff` (흰색) | `#eef3f9` (연파랑) |
+| 좌측 보더 | 없음 | `3px solid #0d6efd` |
+
+**교훈**
+- 계층적 메뉴에서는 **시각적 계층 구조**가 중요
+- 배경색, 글자 크기/굵기, 들여쓰기, 보더 등으로 레벨을 구분
+- 색상 차이만으로는 부족할 수 있으므로 여러 속성을 조합하여 구분
 
 ---
 

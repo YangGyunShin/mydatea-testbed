@@ -1,7 +1,7 @@
 # 📋 다음 세션 작업 가이드
 
-> **마지막 업데이트**: 2026-02-01  
-> **다음 작업**: Phase 4-1 계속 - 마이데이터 인증 API 규격 (별도 섹션)
+> **마지막 업데이트**: 2026-02-02  
+> **다음 작업**: Phase 4-1 계속 - 마이데이터 지원 API 규격
 
 ---
 
@@ -23,7 +23,8 @@
 | Phase 2: 회원 기능 | ✅ | 4단계 회원가입, 이메일 인증 |
 | Phase 3: 게시판 기능 | ✅ | 공지사항, FAQ, 문의, 자료실, 자유게시판 |
 | Phase 4-1: 데이터 표준 API | ✅ | 기본규격, 인증규격, 참여자별 처리절차 |
-| Phase 4-1: 마이데이터 인증 API 규격 | ⬜ | **다음 작업** |
+| Phase 4-1: 마이데이터 인증 API 규격 | ✅ | 개별인증 API (4개), 통합인증 API (9개) |
+| Phase 4-1: 마이데이터 지원 API 규격 | ⬜ | **다음 작업** |
 
 ---
 
@@ -61,29 +62,45 @@
 
 ---
 
-## 🎯 다음 작업: 마이데이터 인증 API 규격
+## 🎯 다음 작업: 마이데이터 지원 API 규격
 
 ### 핵심 구조
 
-원본 사이트에서 확인한 결과, **마이데이터 인증 API 규격**은 API가이드의 하위가 아니라 **별도 섹션**입니다.
-
-**원본 사이트 구조:**
+원본 사이트 스크린샷에서 확인한 사이드바 하위 메뉴:
 ```
-API가이드 (GNB 메뉴)
-├── API가이드 (데이터 표준 API)     ← 별도 사이드바 "API가이드"
-│   ├── 데이터 표준 API 기본규격     ✅ 완료
-│   ├── 데이터 표준 API 인증규격     ✅ 완료
-│   └── 마이데이터 참여자별 API 처리 절차  ✅ 완료
-│
-├── 마이데이터 인증 API 규격         ← 별도 사이드바 "마이데이터 인증 API 규격"
-│   ├── 개별인증 API                 ⬜ 다음 작업
-│   └── 통합인증 API                 ⬜ 다음 작업
-│
-├── 마이데이터 지원 API 규격         ← 별도 사이드바 (스캔 필요)
-└── 마이데이터 정보제공 API 규격     ← 별도 사이드바 (스캔 필요)
+마이데이터 지원 API 규격 (activeGroup='support')
+├── 지원 API(종합포털 제공)
+└── 지원 API(마이데이터사업자/정보제공자 제공)
 ```
 
-### CertApiController 템플릿 (사용자가 생성)
+### 아코디언 사이드바 구조 (이미 구현됨)
+
+모든 API 규격 페이지는 **동일한 아코디언 사이드바**(`sidebar-api-spec.html`)를 공유합니다:
+```
+API가이드                          (activeGroup='guide')  ✅ 완료
+├── 데이터 표준 API 기본규격
+├── 데이터 표준 API 인증규격
+└── 마이데이터 참여자별 API 처리 절차
+
+마이데이터 인증 API 규격            (activeGroup='cert')   ✅ 완료
+├── 개별인증 API
+└── 통합인증 API
+
+마이데이터 지원 API 규격            (activeGroup='support') ⬜ 다음 작업
+├── 지원 API(종합포털 제공)
+└── 지원 API(마이데이터사업자/정보제공자 제공)
+
+마이데이터 정보제공 API 규격        (activeGroup='info')   ⬜ 예정
+└── (스캔 필요)
+```
+
+### 작업 절차
+
+#### 1단계: 원본 사이트 스캔
+- 원본 URL에서 "마이데이터 지원 API 규격" 섹션 내용 스캔
+- 각 하위 페이지의 API 스펙 데이터 추출
+
+#### 2단계: SupportApiController.java 생성 (사용자가 생성)
 
 ```java
 package com.mydata.mydatatestbed.controller;
@@ -97,158 +114,150 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/cert-api")
-public class CertApiController {
+@RequestMapping("/support-api")
+public class SupportApiController {
 
-    /**
-     * /cert-api 접속 시 개별인증 API 페이지로 리다이렉트
-     */
     @GetMapping
-    public String redirectToIndividual() {
-        return "redirect:/cert-api/individual";
+    public String redirectToPortal() {
+        return "redirect:/support-api/portal";
     }
 
-    /**
-     * 개별인증 API
-     */
-    @GetMapping("/individual")
-    public String individualApi(Model model) {
-        model.addAttribute("sidebarMenus", getSidebarMenus());
-        model.addAttribute("currentMenu", "/cert-api/individual");
-        model.addAttribute("breadcrumbItems", getBreadcrumbItems("개별인증 API"));
-        return "cert-api/individual-api";
+    @GetMapping("/portal")
+    public String portalApi(Model model) {
+        model.addAttribute("activeGroup", "support");
+        model.addAttribute("currentMenu", "/support-api/portal");
+        model.addAttribute("breadcrumbItems", getBreadcrumbItems("지원 API(종합포털 제공)"));
+        return "support-api/portal-api";
     }
 
-    /**
-     * 통합인증 API
-     */
-    @GetMapping("/integrated")
-    public String integratedApi(Model model) {
-        model.addAttribute("sidebarMenus", getSidebarMenus());
-        model.addAttribute("currentMenu", "/cert-api/integrated");
-        model.addAttribute("breadcrumbItems", getBreadcrumbItems("통합인증 API"));
-        return "cert-api/integrated-api";
+    @GetMapping("/provider")
+    public String providerApi(Model model) {
+        model.addAttribute("activeGroup", "support");
+        model.addAttribute("currentMenu", "/support-api/provider");
+        model.addAttribute("breadcrumbItems", getBreadcrumbItems("지원 API(마이데이터사업자/정보제공자 제공)"));
+        return "support-api/provider-api";
     }
 
-    // 마이데이터 인증 API 규격 사이드바 메뉴
-    private List<Map<String, String>> getSidebarMenus() {
-        return List.of(
-                Map.of("name", "개별인증 API", "url", "/cert-api/individual"),
-                Map.of("name", "통합인증 API", "url", "/cert-api/integrated")
-        );
-    }
-
-    // 브레드크럼 생성
     private List<Map<String, String>> getBreadcrumbItems(String current) {
         return List.of(
                 Map.of("name", "홈", "url", "/"),
                 Map.of("name", "API가이드", "url", "/api-guide"),
-                Map.of("name", "마이데이터 인증 API 규격", "url", "/cert-api"),
+                Map.of("name", "마이데이터 지원 API 규격", "url", "/support-api"),
                 Map.of("name", current, "url", "")
         );
     }
 }
 ```
 
-### ApiGuideController 사이드바 URL 수정 필요
+#### 3단계: sidebar-api-spec.html 수정
+지원 API 하위 메뉴 추가 (현재 주석 처리 상태):
 
-기존 `getSidebarMenus()`에서 마이데이터 인증 API 규격 링크를 `/cert-api`로 변경:
+```html
+<!-- 마이데이터 지원 API 규격 -->
+<div class="sidebar-group" th:classappend="${activeGroup == 'support'} ? ' active' : ''">
+    <a th:href="@{/support-api}" class="sidebar-group-title">마이데이터 지원 API 규격</a>
+    <ul class="sidebar-group-menu" th:if="${activeGroup == 'support'}">
+        <li th:classappend="${currentMenu == '/support-api/portal'} ? ' active' : ''">
+            <a th:href="@{/support-api/portal}">지원 API(종합포털 제공)</a>
+        </li>
+        <li th:classappend="${currentMenu == '/support-api/provider'} ? ' active' : ''">
+            <a th:href="@{/support-api/provider}">지원 API(마이데이터사업자/정보제공자 제공)</a>
+        </li>
+    </ul>
+</div>
+```
+
+#### 4단계: SecurityConfig.java 수정
 
 ```java
-// 변경 전
-Map.of("name", "마이데이터 인증 API 규격", "url", "/api-guide/auth-api"),
-// 변경 후
-Map.of("name", "마이데이터 인증 API 규격", "url", "/cert-api"),
+// 기존
+.requestMatchers("/intro/**", "/api-guide/**", "/cert-api/**").permitAll()
+// 변경
+.requestMatchers("/intro/**", "/api-guide/**", "/cert-api/**", "/support-api/**").permitAll()
 ```
 
-마찬가지로 지원/정보제공도 추후 별도 컨트롤러 URL로 변경 예정:
-```java
-Map.of("name", "마이데이터 지원 API 규격", "url", "/support-api"),
-Map.of("name", "마이데이터 정보제공 API 규격", "url", "/info-api")
+#### 5단계: HTML 템플릿 생성 (Claude가 생성)
+
+```
+src/main/resources/templates/support-api/
+├── portal-api.html      # /support-api/portal   (지원 API - 종합포털 제공)
+└── provider-api.html    # /support-api/provider  (지원 API - 마이데이터사업자/정보제공자 제공)
 ```
 
-### SecurityConfig 수정 필요
+### 생성할 파일 목록
 
-```java
-// 추가 필요
-.requestMatchers("/cert-api/**").permitAll()
+```
+src/main/java/.../controller/
+└── SupportApiController.java        # 사용자가 생성 (위 템플릿 참고)
+
+src/main/resources/templates/support-api/
+├── portal-api.html                  # Claude가 생성
+└── provider-api.html                # Claude가 생성
 ```
 
-### 스캔 완료된 데이터: 개별인증 API
+### 참고: 기존 패턴
 
-원본 URL: `https://developers.mydatakorea.org/mdtb/apg/mac/bas/FSAG0201?id=7`
+인증 API 규격에서 사용된 HTML 구조를 동일하게 적용:
+- `.api-spec-card` 컨테이너
+- `.api-version-badge` 버전 배지
+- `.method-badge` HTTP Method 배지
+- `.api-toc` Table of Contents
+- `.api-msg-table` 메시지 명세 테이블
 
-**페이지 구성** (Table of Contents):
-- 개별인증-001: 인가코드 발급 요청 (v0, v2)
-- 개별인증-002: 접근토큰 발급 요청 (v0, v2)
-- 개별인증-003: 접근토큰 갱신 (v0, v2)
-- 개별인증-004: 접근토큰 폐기 (v0, v2)
-
-**각 API 스펙 구조** (반복 패턴):
-```
-API 제목 | 버전 | 날짜
-─────────────────────────
-기본 정보 테이블:
-  API ID, HTTP Method, API 제공자, API 요청자, API명(URI), 설명, 기준시점, Content-Type
-
-요청 메시지 명세 테이블:
-  HTTP | 항목명 | 항목설명 | 필수 | 타입(길이) | 설명(비고)
-
-응답 메시지 명세 테이블:
-  HTTP | 항목명 | 항목설명 | 필수 | 타입(길이) | 설명(비고)
-```
-
-### 스캔 대기: 통합인증 API
-
-원본 URL에서 사이드바 "통합인증 API" 클릭 시 이동하는 페이지를 스캔해야 함.
-예상 구성: 통합인증-001, 002, 003
+CSS는 이미 `api-guide.css`에 모두 정의되어 있으므로 추가 CSS 불필요.
 
 ---
 
-## 📂 Phase 4-1 완료된 파일 구조
+## 📂 현재 완료된 파일 구조
 
 ```
 src/main/java/com/mydata/mydatatestbed/controller/
-└── ApiGuideController.java       # 데이터 표준 API 3개 페이지
+├── MainController.java
+├── MemberController.java
+├── SupportController.java
+├── ApiGuideController.java          # activeGroup="guide"
+└── CertApiController.java          # activeGroup="cert"
 
-src/main/resources/templates/api-guide/
-├── basic-spec.html               # /api-guide/base     (기본규격)
-├── auth-spec.html                # /api-guide/auth     (인증규격)
-└── process-spec.html             # /api-guide/process  (참여자별 처리 절차)
+src/main/resources/templates/
+├── layout/
+│   ├── default-layout.html
+│   ├── header.html
+│   ├── footer.html
+│   ├── sidebar.html                 # 일반 사이드바 (고객지원용)
+│   └── sidebar-api-spec.html        # 아코디언 사이드바 (API 규격용)
+├── api-guide/
+│   ├── basic-spec.html              # /api-guide/base
+│   ├── auth-spec.html               # /api-guide/auth
+│   └── process-spec.html            # /api-guide/process
+├── cert-api/
+│   ├── individual-api.html          # /cert-api/individual
+│   └── integrated-api.html          # /cert-api/integrated
+└── ...
 
 src/main/resources/static/css/
-└── api-guide.css                 # API 가이드 전용 CSS
-```
-
-### 다음 생성할 파일 (마이데이터 인증 API 규격)
-
-```
-src/main/java/com/mydata/mydatatestbed/controller/
-└── CertApiController.java        # 사용자가 생성 (위 템플릿 참고)
-
-src/main/resources/templates/cert-api/
-├── individual-api.html           # /cert-api/individual (개별인증 API)
-└── integrated-api.html           # /cert-api/integrated (통합인증 API)
+├── sidebar.css                      # 아코디언 사이드바 스타일 포함
+└── api-guide.css                    # API 스펙 카드, 테이블 스타일
 ```
 
 ---
 
-## 🐛 해결된 트러블슈팅 요약 (Phase 4 관련)
+## 🐛 해결된 트러블슈팅 요약
 
 | 문제 | 원인 | 해결 |
 |------|------|------|
-| `/api-guide` 접속 시 404 | URL을 `/api-guide/base`로 변경 후 기본 매핑 없음 | `redirectToBase()` 메서드 추가 |
-| Thymeleaf 정적 클래스 접근 제한 | Thymeleaf 보안 정책으로 `T(...)` 문법 사용 불가 | 대체 템플릿 표현식 사용 |
+| API 가이드 사이드바에 세부항목 미표시 | 아코디언 사이드바에 API가이드 그룹 누락 | `sidebar-api-spec.html`에 guide 그룹 추가 |
+| 사이드바 템플릿-컨트롤러 불일치 | HTML은 `activeGroup` 기대, 컨트롤러는 `sidebarMenus` 전달 | 컨트롤러를 `activeGroup` 방식으로 통일 |
+| 상위/세부 항목 구분 어려움 | 동일한 배경색, 글자 크기 | 세부항목 배경색/보더 추가, 글자 크기 차별화 |
 
 ---
 
 ## 💬 다음 세션 시작하기
 
-1. **CertApiController.java** 생성 (위 템플릿 참고)
-2. **ApiGuideController** 사이드바 URL 수정 (`/cert-api`)
-3. **SecurityConfig**에 `/cert-api/**` permitAll 추가
-4. 원본 사이트에서 **통합인증 API** 스캔
-5. `individual-api.html`, `integrated-api.html` 생성
+1. 원본 사이트에서 **마이데이터 지원 API 규격** 스캔 요청
+2. **SupportApiController.java** 생성 (위 템플릿 참고)
+3. **sidebar-api-spec.html** 하위 메뉴 추가
+4. **SecurityConfig**에 `/support-api/**` permitAll 추가
+5. `portal-api.html`, `provider-api.html` 생성
 
 ---
 
