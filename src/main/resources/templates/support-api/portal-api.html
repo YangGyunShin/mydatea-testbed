@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout}">
+<head>
+    <title>지원 API(종합포털 제공)</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/sub-page.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+        <link rel="stylesheet" th:href="@{/css/api-guide.css}">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 페이지 배너 -->
+    <th:block th:replace="~{fragments/page-banner :: page-banner('API가이드', '금융분야 마이데이터 표준 API 규격을 안내합니다')}"></th:block>
+
+    <!-- 브레드크럼 -->
+    <th:block th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbItems})}"></th:block>
+
+    <!-- 서브 페이지 레이아웃 -->
+    <div class="sub-page-layout">
+        <!-- 사이드바 (아코디언) -->
+        <th:block th:replace="~{layout/sidebar-api-spec :: sidebar-api-spec(${activeGroup}, ${currentMenu})}"></th:block>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="sub-page-main">
+            <h2 class="content-title">지원 API(종합포털 제공)</h2>
+
+            <!-- Table of Contents -->
+            <div class="api-toc">
+                <h4 class="api-toc-title">Table of Contents</h4>
+                <ul class="api-toc-list">
+                    <li><a href="#support-001-v0">접근토근 발급 (지원API 호출용) <span class="api-version-badge">v0</span></a></li>
+                    <li><a href="#support-002-v2">기관정보 조회 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-002-v1">기관정보 조회 <span class="api-version-badge v2">v1</span></a></li>
+                    <li><a href="#support-003-v2">서비스정보 조회 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-003-v1">서비스정보 조회 <span class="api-version-badge v2">v1</span></a></li>
+                    <li><a href="#support-004-v1">마이데이터사업자/정보수신자 통계자료 전송 <span class="api-version-badge v2">v1</span></a></li>
+                    <li><a href="#support-004-v2">마이데이터사업자/정보수신자 통계자료 전송 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-005-v2">정보제공자 통계자료 전송 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-005-v1">정보제공자 통계자료 전송 <span class="api-version-badge v2">v1</span></a></li>
+                    <li><a href="#support-006-v1">통합인증기관용 기관정보 조회 <span class="api-version-badge v2">v1</span></a></li>
+                    <li><a href="#support-006-v2">통합인증기관용 기관정보 조회 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-105-v2">개인(신용)정보 제3자 제공동의 내역 요청 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-106-v2">개인(신용)정보 제3자 제공동의에 따른 제공 내역 요청 <span class="api-version-badge v2">v2</span></a></li>
+                    <li><a href="#support-107-v2">개인(신용)정보 제3자 제공 동의 내역 철회 요청 <span class="api-version-badge v2">v2</span></a></li>
+                </ul>
+            </div>
+
+            <!-- ==================== 지원-001 v0: 접근토근 발급 ==================== -->
+            <div class="api-spec-card" id="support-001-v0">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">접근토근 발급 (지원API 호출용)</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge">v0</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-001</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>마이데이터사업자, 정보제공자, 통합인증기관</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/mgmts/oauth/2.0/token</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">종합포털이 사전에 발급해준 '지원 API 호출용 자격증명'을 이용하여 접근토큰 발급<br>- 중계기관을 이용하는 기관의 경우, 중계기관이 본 API를 호출하여 접근토큰을 대표로 발급 받음</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>application/x-www-form-urlencoded</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="4">Body</td><td>grant_type</td><td>권한부여방식</td><td>Y</td><td>aNS(18)</td><td class="left">권한부여 방식('client_credentials' 고정값)</td></tr>
+                        <tr><td>client_id</td><td>클라이언트 ID</td><td>Y</td><td>aN(50)</td><td class="left">종합포털에서 발급한 지원 API 호출용 클라이언트 식별값</td></tr>
+                        <tr><td>client_secret</td><td>클라이언트 Secret</td><td>Y</td><td>aN(50)</td><td class="left">종합포털에서 발급한 지원 API 호출 클라이언트 Secret 값</td></tr>
+                        <tr><td>scope</td><td>권한 범위</td><td>Y</td><td>a(6)</td><td class="left">고정값 : 'manage'</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="5">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>token_type</td><td>접근토큰 유형</td><td>Y</td><td>a(6)</td><td class="left">접근토큰 유형 ('Bearer' 고정값)</td></tr>
+                        <tr><td>access_token</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급된 접근토큰</td></tr>
+                        <tr><td>expires_in</td><td>접근토큰 유효기간</td><td>Y</td><td>N(9)</td><td class="left">접근토큰 유효기간(단위 : 초)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-002 v2: 기관정보 조회 ==================== -->
+            <div class="api-spec-card" id="support-002-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">기관정보 조회</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-002</td><td class="info-label">HTTP Method</td><td><span class="method-badge get">GET</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>마이데이터사업자, 정보제공자, 통합인증기관(사설인증서)</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/orgs</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">정보제공자/마이데이터사업자/통합인증기관이 타기관의 기관정보를 종합포털로부터 제공받기 위한 API<br>- 수정내역이 없는 기관의 기관정보는 회신 목록에 포함하지 않음<br>- 중계기관의 경우, 종합포털은 중계기관에게 기관정보를 배포</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>-</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰<br>- 접근토큰 유형(Bearer)을 명시<br>예) Authorization: Bearer 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td>Parameter</td><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">가장 최근 조회한 시간<br>- 최초 API 호출시에는 0으로 세팅</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="22">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">API 처리 시점의 현재시각을 설정하여 회신</td></tr>
+                        <tr><td>org_cnt</td><td>기관목록수</td><td>Y</td><td>N(5)</td><td class="left"></td></tr>
+                        <tr><td>org_list</td><td>기관목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--op_type</td><td>기관정보의 신규/수정/삭제 구분</td><td>N</td><td>A(1)</td><td class="left">'I':신규, 'M':수정, 'D':삭제</td></tr>
+                        <tr><td class="indent-field">--org_code</td><td>기관코드</td><td>N</td><td>aN(10)</td><td class="left">기관코드</td></tr>
+                        <tr><td class="indent-field">--org_type</td><td>기관구분</td><td>N</td><td>aN(2)</td><td class="left">'01':정보제공자(API자체구축), '02':정보제공자(중계기관이용), '03':마이데이터사업자, '04':중계기관, '05':인증서 본인확인기관 등</td></tr>
+                        <tr><td class="indent-field">--is_rcv_org</td><td>정보수신자 여부</td><td>N</td><td>Boolean</td><td class="left">해당 기관이 정보수신자(마이데이터사업자 제외)인지 여부</td></tr>
+                        <tr><td class="indent-field">--org_name</td><td>기관명</td><td>N</td><td>AH(60)</td><td class="left">기관명 (op_type='D'인 경우 미회신)</td></tr>
+                        <tr><td class="indent-field">--org_regno</td><td>사업자등록번호</td><td>N</td><td>aN(12)</td><td class="left">사업자 등록번호 ("-" 포함)</td></tr>
+                        <tr><td class="indent-field">--corp_regno</td><td>법인등록번호</td><td>N</td><td>aN(13)</td><td class="left">법인 등록번호</td></tr>
+                        <tr><td class="indent-field">--serial_num</td><td>TLS 인증서 시리얼넘버</td><td>N</td><td>aNS(20)</td><td class="left">TLS인증서 내 SERIALNUMBER 값</td></tr>
+                        <tr><td class="indent-field">--address</td><td>주소</td><td>N</td><td>AH(150)</td><td class="left">주소</td></tr>
+                        <tr><td class="indent-field">--domain</td><td>API 서버 도메인명</td><td>N</td><td>aNS(70)</td><td class="left">API 서버의 도메인명</td></tr>
+                        <tr><td class="indent-field">--domain_ip_cnt</td><td>API서버 공인IP 목록수</td><td>N</td><td>N(3)</td><td class="left">API서버 공인IP 목록 수</td></tr>
+                        <tr><td class="indent-field">--domain_ip_list</td><td>API서버 공인IP 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--relay_org_code</td><td>중계기관 기관코드</td><td>N</td><td>aN(10)</td><td class="left">중계기관/거점중계기관 기관코드</td></tr>
+                        <tr><td class="indent-field">--industry</td><td>업권정보</td><td>N</td><td>a(10)</td><td class="left">'bank', 'card', 'invest' 등</td></tr>
+                        <tr><td class="indent-field">--auth_type</td><td>제공 인증방식</td><td>N</td><td>aN(2)</td><td class="left">개별인증/통합인증 종류</td></tr>
+                        <tr><td class="indent-field">--ip_cnt</td><td>IP 목록수</td><td>N</td><td>N(3)</td><td class="left">API 요청자의 IP 목록 수</td></tr>
+                        <tr><td class="indent-field">--np_time_cnt</td><td>정기적 전송가능 시간대 목록수</td><td>N</td><td>N(3)</td><td class="left">Non-Peak 시간대 목록 수 (최대 3개)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-002 v1: 기관정보 조회 ==================== -->
+            <div class="api-spec-card" id="support-002-v1">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">기관정보 조회</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v1</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-002</td><td class="info-label">HTTP Method</td><td><span class="method-badge get">GET</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>마이데이터사업자, 정보제공자, 통합인증기관(사설인증서)</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v1/mgmts/orgs</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">정보제공자/마이데이터사업자/통합인증기관이 타기관의 기관정보를 종합포털로부터 제공받기 위한 API<br>- 수정내역이 없는 기관의 기관정보는 회신 목록에 포함하지 않음</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>-</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰<br>- 접근토큰 유형(Bearer)을 명시</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td>Parameter</td><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">가장 최근 조회한 시간 (최초 호출시 0)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="22">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">API 처리 시점의 현재시각을 설정하여 회신</td></tr>
+                        <tr><td>org_cnt</td><td>기관목록수</td><td>Y</td><td>N(5)</td><td class="left"></td></tr>
+                        <tr><td>org_list</td><td>기관목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--op_type</td><td>기관정보의 신규/수정/삭제 구분</td><td>N</td><td>A(1)</td><td class="left">'I':신규, 'M':수정, 'D':삭제</td></tr>
+                        <tr><td class="indent-field">--org_code</td><td>기관코드</td><td>N</td><td>aN(10)</td><td class="left">기관코드</td></tr>
+                        <tr><td class="indent-field">--org_type</td><td>기관구분</td><td>N</td><td>aN(2)</td><td class="left">'01':정보제공자(API자체구축), '02':정보제공자(중계기관이용), '03':마이데이터사업자, '04':중계기관</td></tr>
+                        <tr><td class="indent-field">--is_rcv_org</td><td>정보수신자 여부</td><td>N</td><td>Boolean</td><td class="left">해당 기관이 정보수신자인지 여부</td></tr>
+                        <tr><td class="indent-field">--org_name</td><td>기관명</td><td>N</td><td>AH(60)</td><td class="left">기관명</td></tr>
+                        <tr><td class="indent-field">--org_regno</td><td>사업자등록번호</td><td>N</td><td>aN(12)</td><td class="left">사업자 등록번호 ("-" 포함)</td></tr>
+                        <tr><td class="indent-field">--corp_regno</td><td>법인등록번호</td><td>N</td><td>aN(13)</td><td class="left">법인 등록번호</td></tr>
+                        <tr><td class="indent-field">--serial_num</td><td>TLS 인증서 시리얼넘버</td><td>N</td><td>aNS(20)</td><td class="left">TLS인증서 내 SERIALNUMBER 값</td></tr>
+                        <tr><td class="indent-field">--address</td><td>주소</td><td>N</td><td>AH(150)</td><td class="left">주소</td></tr>
+                        <tr><td class="indent-field">--domain</td><td>API 서버 도메인명</td><td>N</td><td>aNS(70)</td><td class="left">API 서버의 도메인명</td></tr>
+                        <tr><td class="indent-field">--domain_ip_cnt</td><td>API서버 공인IP 목록수</td><td>N</td><td>N(3)</td><td class="left">API서버 공인IP 목록 수</td></tr>
+                        <tr><td class="indent-field">--domain_ip_list</td><td>API서버 공인IP 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--relay_org_code</td><td>중계기관 기관코드</td><td>N</td><td>aN(10)</td><td class="left">중계기관/거점중계기관 기관코드</td></tr>
+                        <tr><td class="indent-field">--industry</td><td>업권정보</td><td>N</td><td>a(10)</td><td class="left">'bank', 'card', 'invest' 등</td></tr>
+                        <tr><td class="indent-field">--auth_type</td><td>제공 인증방식</td><td>N</td><td>aN(2)</td><td class="left">개별인증/통합인증 종류</td></tr>
+                        <tr><td class="indent-field">--ip_cnt</td><td>IP 목록수</td><td>N</td><td>N(3)</td><td class="left">API 요청자의 IP 목록 수</td></tr>
+                        <tr><td class="indent-field">--np_time_cnt</td><td>정기적 전송가능 시간대 목록수</td><td>N</td><td>N(3)</td><td class="left">Non-Peak 시간대 목록 수</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-003 v2: 서비스정보 조회 ==================== -->
+            <div class="api-spec-card" id="support-003-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">서비스정보 조회</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-003</td><td class="info-label">HTTP Method</td><td><span class="method-badge get">GET</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>정보제공자</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/services</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">정보제공자가 타기관(마이데이터사업자)의 서비스정보를 종합포털로부터 제공받기 위한 API<br>- 수정내역이 없는 서비스정보는 회신 목록에 포함하지 않음</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>-</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td>Parameter</td><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">가장 최근 조회한 시간 (최초 호출시 0)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="16">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">API 처리 시점의 현재시각을 설정하여 회신</td></tr>
+                        <tr><td>org_cnt</td><td>기관목록수</td><td>Y</td><td>N(5)</td><td class="left"></td></tr>
+                        <tr><td>org_list</td><td>기관목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--org_code</td><td>기관코드</td><td>N</td><td>aN(10)</td><td class="left">마이데이터사업자 기관코드</td></tr>
+                        <tr><td class="indent-field">--service_cnt</td><td>서비스목록수</td><td>N</td><td>N(3)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--service_list</td><td>서비스목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----service_name</td><td>서비스명</td><td>N</td><td>AH(30)</td><td class="left">서비스명</td></tr>
+                        <tr><td class="indent-field">----op_type</td><td>서비스정보의 신규/수정/삭제 구분</td><td>N</td><td>A(1)</td><td class="left">'I':신규, 'M':수정, 'D':삭제</td></tr>
+                        <tr><td class="indent-field">----client_id</td><td>클라이언트 ID</td><td>N</td><td>aN(50)</td><td class="left">종합포털에 마이데이터 서비스 등록 시 발급 받은 클라이언트 식별값</td></tr>
+                        <tr><td class="indent-field">----client_secret</td><td>클라이언트 Secret</td><td>N</td><td>aN(50)</td><td class="left">클라이언트 Secret 값</td></tr>
+                        <tr><td class="indent-field">----redirect_uri_cnt</td><td>Callback URL 개수</td><td>N</td><td>N(1)</td><td class="left">Callback URL 개수 (4개까지 등록 허용)</td></tr>
+                        <tr><td class="indent-field">----redirect_uri_list</td><td>Callback URL 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----app_scheme_cnt</td><td>앱 URL 스킴 목록수</td><td>N</td><td>N(1)</td><td class="left">앱 스킴 개수</td></tr>
+                        <tr><td class="indent-field">----app_scheme_list</td><td>앱 URL 스킴 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-003 v1: 서비스정보 조회 ==================== -->
+            <div class="api-spec-card" id="support-003-v1">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">서비스정보 조회</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v1</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-003</td><td class="info-label">HTTP Method</td><td><span class="method-badge get">GET</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>정보제공자</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v1/mgmts/services</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">정보제공자가 타기관(마이데이터사업자)의 서비스정보를 종합포털로부터 제공받기 위한 API<br>- 수정내역이 없는 서비스정보는 회신 목록에 포함하지 않음</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>-</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td>Parameter</td><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">가장 최근 조회한 시간 (최초 호출시 0)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="16">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">API 처리 시점의 현재시각을 설정하여 회신</td></tr>
+                        <tr><td>org_cnt</td><td>기관목록수</td><td>Y</td><td>N(5)</td><td class="left"></td></tr>
+                        <tr><td>org_list</td><td>기관목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--org_code</td><td>기관코드</td><td>N</td><td>aN(10)</td><td class="left">마이데이터사업자 기관코드</td></tr>
+                        <tr><td class="indent-field">--service_cnt</td><td>서비스목록수</td><td>N</td><td>N(3)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--service_list</td><td>서비스목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----service_name</td><td>서비스명</td><td>N</td><td>AH(30)</td><td class="left">서비스명</td></tr>
+                        <tr><td class="indent-field">----op_type</td><td>서비스정보의 신규/수정/삭제 구분</td><td>N</td><td>A(1)</td><td class="left">'I':신규, 'M':수정, 'D':삭제</td></tr>
+                        <tr><td class="indent-field">----client_id</td><td>클라이언트 ID</td><td>N</td><td>aN(50)</td><td class="left">종합포털에 마이데이터 서비스 등록 시 발급 받은 클라이언트 식별값</td></tr>
+                        <tr><td class="indent-field">----client_secret</td><td>클라이언트 Secret</td><td>N</td><td>aN(50)</td><td class="left">클라이언트 Secret 값</td></tr>
+                        <tr><td class="indent-field">----redirect_uri_cnt</td><td>Callback URL 개수</td><td>N</td><td>N(1)</td><td class="left">Callback URL 개수 (4개까지 등록 허용)</td></tr>
+                        <tr><td class="indent-field">----redirect_uri_list</td><td>Callback URL 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----app_scheme_cnt</td><td>앱 URL 스킴 목록수</td><td>N</td><td>N(1)</td><td class="left">앱 스킴 개수</td></tr>
+                        <tr><td class="indent-field">----app_scheme_list</td><td>앱 URL 스킴 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-004 v1: 마이데이터사업자/정보수신자 통계자료 전송 ==================== -->
+            <div class="api-spec-card" id="support-004-v1">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">마이데이터사업자/정보수신자 통계자료 전송</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v1</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-004</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>마이데이터사업자</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v1/mgmts/statistics/mydata</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">마이데이터사업자 또는 정보수신자는 통계자료를 종합포털에 주 단위 집중<br>- 기준일자는 일요일로 한정하며 전주 일요일 ~ 토요일 데이터를 일요일에 전송</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>특정 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="14">Body</td><td>type</td><td>통계정보구분</td><td>Y</td><td>N(1)</td><td class="left">1:정기적 전송, 2:비정기적 전송(정보주체 개입)</td></tr>
+                        <tr><td>client_id</td><td>클라이언트 ID</td><td>Y</td><td>aN(50)</td><td class="left">마이데이터사업자/정보수신자의 클라이언트 ID</td></tr>
+                        <tr><td>inquiry_date</td><td>전송 기준일자</td><td>Y</td><td>DATE</td><td class="left">기준일자는 일요일로 한정, 직전 7일에 대한 통계자료 전송</td></tr>
+                        <tr><td>stat_date_cnt</td><td>통계일자수</td><td>Y</td><td>N(1)</td><td class="left">'7' 고정값</td></tr>
+                        <tr><td>stat_date_list</td><td>통계일자별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--stat_date</td><td>통계일자</td><td>Y</td><td>DATE</td><td class="left">통계자료의 해당 일자</td></tr>
+                        <tr><td class="indent-field">--org_cnt</td><td>정보제공자수</td><td>Y</td><td>N(4)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--org_list</td><td>정보제공자 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----org_code</td><td>정보제공자 기관코드</td><td>Y</td><td>aN(10)</td><td class="left">정보제공자 기관코드</td></tr>
+                        <tr><td class="indent-field">----consent_new</td><td>신규 또는 변경 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1'인 경우 미회신</td></tr>
+                        <tr><td class="indent-field">----consent_revoke</td><td>철회된 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1'인 경우 미회신</td></tr>
+                        <tr><td class="indent-field">----consent_own</td><td>최종 유효한 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1'인 경우 미회신</td></tr>
+                        <tr><td class="indent-field">----api_type_cnt</td><td>API 구분 수</td><td>Y</td><td>N(3)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----api_type_list</td><td>API 구분 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left">하위: api_type, tm_slot_cnt, tm_slot_list (tm_slot, rsp_avg, rsp_total, rsp_stdev, success_api_cnt, fail_api_cnt)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-004 v2: 마이데이터사업자/정보수신자 통계자료 전송 ==================== -->
+            <div class="api-spec-card" id="support-004-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">마이데이터사업자/정보수신자 통계자료 전송</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-004</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>마이데이터사업자</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/statistics/mydata</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">마이데이터사업자 또는 정보수신자는 통계자료를 종합포털에 주 단위 집중<br>- 기준일자는 일요일로 한정하며 전주 일요일 ~ 토요일 데이터를 일요일에 전송</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>특정 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="16">Body</td><td>type</td><td>통계정보구분</td><td>Y</td><td>N(1)</td><td class="left">1:정기적 전송, 2:비정기적 전송(정보주체 개입), 3:목록 전송</td></tr>
+                        <tr><td>client_id</td><td>클라이언트 ID</td><td>Y</td><td>aN(50)</td><td class="left">마이데이터사업자/정보수신자의 클라이언트 ID</td></tr>
+                        <tr><td>inquiry_date</td><td>전송 기준일자</td><td>Y</td><td>DATE</td><td class="left">기준일자는 일요일로 한정</td></tr>
+                        <tr><td>stat_date_cnt</td><td>통계일자수</td><td>Y</td><td>N(1)</td><td class="left">'7' 고정값</td></tr>
+                        <tr><td>stat_date_list</td><td>통계일자별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--stat_date</td><td>통계일자</td><td>Y</td><td>DATE</td><td class="left">통계자료의 해당 일자</td></tr>
+                        <tr><td class="indent-field">--svr_usr_cnt</td><td>마이데이터 서비스 가입자 수</td><td>N</td><td>N(10)</td><td class="left">서비스 가입동의서가 유효한 가입자수</td></tr>
+                        <tr><td class="indent-field">--trsms_dem_cnt</td><td>전송요구 완료자 수</td><td>N</td><td>N(10)</td><td class="left">1개 이상 기관에 전송 요구 완료한 가입자 수</td></tr>
+                        <tr><td class="indent-field">--org_cnt</td><td>정보제공자수</td><td>Y</td><td>N(4)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--org_list</td><td>정보제공자 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----org_code</td><td>정보제공자 기관코드</td><td>Y</td><td>aN(10)</td><td class="left">정보제공자 기관코드</td></tr>
+                        <tr><td class="indent-field">----consent_new</td><td>신규 또는 변경 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1','3'인 경우 미전송</td></tr>
+                        <tr><td class="indent-field">----consent_revoke</td><td>철회된 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1','3'인 경우 미전송</td></tr>
+                        <tr><td class="indent-field">----consent_own</td><td>최종 유효한 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1','3'인 경우 미전송</td></tr>
+                        <tr><td class="indent-field">----api_type_cnt</td><td>API 구분 수</td><td>Y</td><td>N(3)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----api_type_list</td><td>API 구분 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left">하위: api_type, tm_slot_cnt, tm_slot_list, 에러코드별 API 호출 횟수 (다수 항목)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-005 v2: 정보제공자 통계자료 전송 ==================== -->
+            <div class="api-spec-card" id="support-005-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">정보제공자 통계자료 전송</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-005</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>정보제공자</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/statistics/provider</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">정보제공자는 통계자료를 종합포털에 주 단위 집중<br>- 기준일자는 일요일로 한정하며 전주 일요일 ~ 토요일 데이터를 월요일에 전송</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>특정 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="15">Body</td><td>org_code</td><td>정보제공자 기관코드</td><td>N</td><td>aN(10)</td><td class="left">API 요청자가 중계기관인 경우만 설정</td></tr>
+                        <tr><td>type</td><td>통계정보구분</td><td>Y</td><td>N(1)</td><td class="left">1:정기적 전송, 2:비정기적 전송(정보주체 개입), 3:목록 전송</td></tr>
+                        <tr><td>inquiry_date</td><td>전송 기준일자</td><td>Y</td><td>DATE</td><td class="left">기준일자는 일요일로 한정</td></tr>
+                        <tr><td>stat_date_cnt</td><td>통계일자수</td><td>Y</td><td>N(1)</td><td class="left">'7' 고정값</td></tr>
+                        <tr><td>stat_date_list</td><td>통계일자별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--stat_date</td><td>통계일자</td><td>Y</td><td>DATE</td><td class="left">통계자료의 해당 일자</td></tr>
+                        <tr><td class="indent-field">--mydata_svc_cnt</td><td>마이데이터 서비스/정보수신자 수</td><td>Y</td><td>N(3)</td><td class="left">마이데이터서비스, 정보수신자 및 종합포털(PDS)에 대한 통계정보를 모두 회신</td></tr>
+                        <tr><td class="indent-field">--mydata_svc_list</td><td>마이데이터 서비스/정보수신자 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----org_code</td><td>기관코드</td><td>Y</td><td>aN(10)</td><td class="left">마이데이터사업자/정보수신자/종합포털 기관코드</td></tr>
+                        <tr><td class="indent-field">----client_id</td><td>클라이언트 ID</td><td>Y</td><td>aN(50)</td><td class="left">마이데이터사업자/정보수신자의 클라이언트 ID</td></tr>
+                        <tr><td class="indent-field">----consent_new</td><td>신규 또는 변경 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1','3'인 경우 미회신</td></tr>
+                        <tr><td class="indent-field">----consent_revoke</td><td>철회된 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1','3'인 경우 미회신</td></tr>
+                        <tr><td class="indent-field">----consent_own</td><td>최종 유효한 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1','3'인 경우 미회신</td></tr>
+                        <tr><td class="indent-field">----api_type_cnt</td><td>API 구분 수</td><td>Y</td><td>N(3)</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----api_type_list</td><td>API 구분 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left">하위: api_type, tm_slot_cnt, tm_slot_list, 에러코드별 API 호출 횟수 (다수 항목)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-005 v1: 정보제공자 통계자료 전송 ==================== -->
+            <div class="api-spec-card" id="support-005-v1">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">정보제공자 통계자료 전송</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v1</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-005</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>정보제공자</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v1/mgmts/statistics/provider</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">정보제공자는 통계자료를 종합포털에 주 단위 집중<br>- 기준일자는 일요일로 한정하며 전주 일요일 ~ 토요일 데이터를 월요일에 전송</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>특정 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="14">Body</td><td>org_code</td><td>정보제공자 기관코드</td><td>N</td><td>aN(10)</td><td class="left">API 요청자가 중계기관인 경우만 설정</td></tr>
+                        <tr><td>type</td><td>통계정보구분</td><td>Y</td><td>N(1)</td><td class="left">1:정기적 전송, 2:비정기적 전송(정보주체 개입)</td></tr>
+                        <tr><td>inquiry_date</td><td>전송 기준일자</td><td>Y</td><td>DATE</td><td class="left">기준일자는 일요일로 한정</td></tr>
+                        <tr><td>stat_date_cnt</td><td>통계일자수</td><td>Y</td><td>N(1)</td><td class="left">'7' 고정값</td></tr>
+                        <tr><td>stat_date_list</td><td>통계일자별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--stat_date</td><td>통계일자</td><td>Y</td><td>DATE</td><td class="left">통계자료의 해당 일자</td></tr>
+                        <tr><td class="indent-field">--mydata_svc_cnt</td><td>마이데이터 서비스/정보수신자 수</td><td>Y</td><td>N(3)</td><td class="left">마이데이터서비스, 정보수신자 및 종합포털(PDS)에 대한 통계정보를 모두 전송</td></tr>
+                        <tr><td class="indent-field">--mydata_svc_list</td><td>마이데이터 서비스/정보수신자 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----org_code</td><td>기관코드</td><td>Y</td><td>aN(10)</td><td class="left">마이데이터사업자/정보수신자/종합포털 기관코드</td></tr>
+                        <tr><td class="indent-field">----client_id</td><td>클라이언트 ID</td><td>Y</td><td>aN(50)</td><td class="left">마이데이터사업자/정보수신자의 클라이언트 ID</td></tr>
+                        <tr><td class="indent-field">----consent_new</td><td>신규 또는 변경 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1'인 경우 미전송</td></tr>
+                        <tr><td class="indent-field">----consent_revoke</td><td>철회된 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1'인 경우 미전송</td></tr>
+                        <tr><td class="indent-field">----consent_own</td><td>최종 유효한 전송요구 수</td><td>N</td><td>N(10)</td><td class="left">type이 '1'인 경우 미전송</td></tr>
+                        <tr><td class="indent-field">----api_type_list</td><td>API 구분 별 통계정보 목록</td><td>Y</td><td>Object</td><td class="left">하위: api_type, tm_slot_cnt, tm_slot_list (tm_slot, success_api_cnt, fail_api_cnt)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-006 v1: 통합인증기관용 기관정보 조회 ==================== -->
+            <div class="api-spec-card" id="support-006-v1">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">통합인증기관용 기관정보 조회</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v1</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-006</td><td class="info-label">HTTP Method</td><td><span class="method-badge get">GET</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>통합인증기관</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v1/mgmts/orgs_for_ca</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">통합인증기관이 통합인증(본인확인) 처리에 필요한 정보제공자, 마이데이터사업자, 중계기관의 기관정보를 요청 및 수집하기 위한 API<br>- 수정내역이 없는 기관은 회신 목록에 포함하지 않음</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>-</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td>Parameter</td><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">가장 최근 조회한 시간 (최초 호출시 0)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="16">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">API 처리 시점의 현재시각을 설정하여 회신</td></tr>
+                        <tr><td>org_cnt</td><td>기관목록수</td><td>Y</td><td>N(5)</td><td class="left"></td></tr>
+                        <tr><td>org_list</td><td>기관목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--org_code</td><td>기관코드</td><td>N</td><td>aN(10)</td><td class="left">기관코드</td></tr>
+                        <tr><td class="indent-field">--op_type</td><td>기관정보의 신규/수정/삭제 구분</td><td>N</td><td>A(1)</td><td class="left">'I':신규, 'M':수정, 'D':삭제</td></tr>
+                        <tr><td class="indent-field">--org_type</td><td>기관구분</td><td>N</td><td>aN(2)</td><td class="left">'01':정보제공자(API자체구축), '02':정보제공자(중계기관이용), '03':마이데이터사업자, '04':중계기관</td></tr>
+                        <tr><td class="indent-field">--org_name</td><td>기관명</td><td>N</td><td>AH(60)</td><td class="left">기관명</td></tr>
+                        <tr><td class="indent-field">--domain</td><td>API서버 도메인명</td><td>N</td><td>aNS(70)</td><td class="left">API 서버의 도메인명</td></tr>
+                        <tr><td class="indent-field">--cp_code</td><td>본인확인용 기관코드</td><td>N</td><td>aN(12)</td><td class="left">본인확인용 기관코드(cpCode)</td></tr>
+                        <tr><td class="indent-field">--relay_org_code</td><td>중계기관 기관코드</td><td>N</td><td>aN(10)</td><td class="left">중계기관을 이용 중인 정보제공자가 해당 중계기관의 기관코드를 회신</td></tr>
+                        <tr><td class="indent-field">--server_cert_issuer_dn</td><td>서버용 공동인증서 발급자 정보</td><td>N</td><td>AH(300)</td><td class="left">통합인증시 사용할 서버용 공동인증서의 issuer DN 값</td></tr>
+                        <tr><td class="indent-field">--server_cert_subject_dn</td><td>서버용 공동인증서 소유자 정보</td><td>N</td><td>AH(300)</td><td class="left">통합인증시 사용할 서버용 공동인증서의 subject DN 값</td></tr>
+                        <tr><td class="indent-field">--ip_cnt</td><td>클라이언트 IP목록수</td><td>N</td><td>N(3)</td><td class="left">통합인증기관에게 본인확인을 요청할 기관의 IP목록 수</td></tr>
+                        <tr><td class="indent-field">--ip_list</td><td>클라이언트 IP목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-006 v2: 통합인증기관용 기관정보 조회 ==================== -->
+            <div class="api-spec-card" id="support-006-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">통합인증기관용 기관정보 조회</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-006</td><td class="info-label">HTTP Method</td><td><span class="method-badge get">GET</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>종합포털</td><td class="info-label">API 요청자</td><td>통합인증기관(인증서 본인확인기관)</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/orgs_for_ca</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">통합인증기관(인증서 본인확인기관)이 통합인증(본인확인) 처리에 필요한 기관정보를 요청 및 수집하기 위한 API<br>- 수정내역이 없는 기관은 회신 목록에 포함하지 않음</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>-</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td>Parameter</td><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">가장 최근 조회한 시간 (최초 호출시 0)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="18">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>search_timestamp</td><td>조회 타임스탬프</td><td>Y</td><td>N(14)</td><td class="left">API 처리 시점의 현재시각을 설정하여 회신</td></tr>
+                        <tr><td>org_cnt</td><td>기관목록수</td><td>Y</td><td>N(5)</td><td class="left"></td></tr>
+                        <tr><td>org_list</td><td>기관목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--org_code</td><td>기관코드</td><td>N</td><td>aN(10)</td><td class="left">기관코드</td></tr>
+                        <tr><td class="indent-field">--op_type</td><td>기관정보의 신규/수정/삭제 구분</td><td>N</td><td>A(1)</td><td class="left">'I':신규, 'M':수정, 'D':삭제</td></tr>
+                        <tr><td class="indent-field">--org_type</td><td>기관구분</td><td>N</td><td>aN(2)</td><td class="left">'01'~'04', '07':종합포털 등</td></tr>
+                        <tr><td class="indent-field">--is_rcv_org</td><td>정보수신자 여부</td><td>N</td><td>Boolean</td><td class="left">해당 기관이 정보수신자인지 여부</td></tr>
+                        <tr><td class="indent-field">--org_name</td><td>기관명</td><td>N</td><td>AH(60)</td><td class="left">기관명</td></tr>
+                        <tr><td class="indent-field">--domain</td><td>API서버 도메인명</td><td>N</td><td>aNS(70)</td><td class="left">API 서버의 도메인명</td></tr>
+                        <tr><td class="indent-field">--cp_code</td><td>본인확인용 기관코드</td><td>N</td><td>aN(12)</td><td class="left">본인확인용 기관코드(cpCode)</td></tr>
+                        <tr><td class="indent-field">--relay_org_code</td><td>중계기관 기관코드</td><td>N</td><td>aN(10)</td><td class="left">중계기관 기관코드</td></tr>
+                        <tr><td class="indent-field">--server_cert_issuer_dn</td><td>서버용 공동인증서 발급자 정보</td><td>N</td><td>AH(300)</td><td class="left">서버용 공동인증서의 issuer DN 값</td></tr>
+                        <tr><td class="indent-field">--server_cert_subject_dn</td><td>서버용 공동인증서 소유자 정보</td><td>N</td><td>AH(300)</td><td class="left">서버용 공동인증서의 subject DN 값</td></tr>
+                        <tr><td class="indent-field">--ip_cnt</td><td>클라이언트 IP목록수</td><td>N</td><td>N(3)</td><td class="left">클라이언트 IP 목록 수</td></tr>
+                        <tr><td class="indent-field">--ip_list</td><td>클라이언트 IP목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">----ip</td><td>클라이언트 IP</td><td>N</td><td>aNS(15)</td><td class="left">클라이언트 IP 주소</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-105 v2: 개인(신용)정보 제3자 제공동의 내역 요청 ==================== -->
+            <div class="api-spec-card" id="support-105-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">개인(신용)정보 제3자 제공동의 내역 요청</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-105</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>마이데이터사업자, 정보수신자</td><td class="info-label">API 요청자</td><td>종합포털</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/agreements</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">고객이 제3자 제공을 위해 마이데이터사업자/정보수신자에 동의하였던 내역을 조회할 수 있도록 지원하는 API</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>org_code</td><td>기관코드</td><td>Y</td><td>aN(10)</td><td class="left">마이데이터사업자/정보수신자의 기관코드</td></tr>
+                        <tr><td>user_ci</td><td>정보주체 식별값</td><td>Y</td><td>B64(100)</td><td class="left">정보주체 식별을 위한 연계정보 (Connection Information)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="16">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>prov_consent_cnt</td><td>서비스목록수</td><td>Y</td><td>N(10)</td><td class="left">동의 내역 수 (0인 경우 아래 항목 미회신)</td></tr>
+                        <tr><td>prov_consent_list</td><td>동의 내역 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--prov_consent_num</td><td>관리번호</td><td>N</td><td>aN(50)</td><td class="left">동의내역 고유 관리번호</td></tr>
+                        <tr><td class="indent-field">--prov_consent_status</td><td>동의서 상태 (코드)</td><td>N</td><td>N(2)</td><td class="left">01:정상, 02:철회 중, 03:철회완료, 04:업무완료</td></tr>
+                        <tr><td class="indent-field">--is_once</td><td>일회성 제공 여부</td><td>N</td><td>Boolean</td><td class="left">고객정보를 1회만 제공하는지 여부</td></tr>
+                        <tr><td class="indent-field">--prov_revoke_dtime</td><td>철회 일시</td><td>N</td><td>DTIME</td><td class="left">동의서 철회 일시 (prov_consent_status가 03인 경우)</td></tr>
+                        <tr><td class="indent-field">--revoke_info</td><td>철회 요청시 안내 문구</td><td>N</td><td>AH(300)</td><td class="left">고객이 종합포털에서 동의 철회 요청 시 안내 할 문구</td></tr>
+                        <tr><td class="indent-field">--prov_service_name</td><td>서비스 명</td><td>N</td><td>AH(100)</td><td class="left">고객이 제3자 제공 동의를 한 서비스 명</td></tr>
+                        <tr><td class="indent-field">--prov_consent_name</td><td>고객이 동의한 동의서명</td><td>N</td><td>AH(100)</td><td class="left">동의서명</td></tr>
+                        <tr><td class="indent-field">--prov_consent_dtime</td><td>동의 일시</td><td>N</td><td>DTIME</td><td class="left">고객이 제3자 제공 동의에 동의한 일시</td></tr>
+                        <tr><td class="indent-field">--snd_org_code</td><td>제공하는자(기관코드)</td><td>N</td><td>aN(10)</td><td class="left">고객의 동의를 받은 마이데이터사업자/정보수신자의 기관코드</td></tr>
+                        <tr><td class="indent-field">--consent_rcv_name</td><td>제공받는자</td><td>N</td><td>AH(200)</td><td class="left">고객 정보를 제공받는 제3자</td></tr>
+                        <tr><td class="indent-field">--prov_consent_purpose</td><td>제공받는자의 이용목적</td><td>N</td><td>AH(1000)</td><td class="left">고객 동의 획득 시 안내 한 이용 목적</td></tr>
+                        <tr><td class="indent-field">--prov_consent_period</td><td>보유 및 이용기간</td><td>N</td><td>AH(300)</td><td class="left">고객 동의 획득 시 안내 한 보유 및 이용기간</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-106 v2: 개인(신용)정보 제3자 제공동의에 따른 제공 내역 요청 ==================== -->
+            <div class="api-spec-card" id="support-106-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">개인(신용)정보 제3자 제공동의에 따른 제공 내역 요청</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-106</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>마이데이터사업자, 정보수신자</td><td class="info-label">API 요청자</td><td>종합포털</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/agreements/detail</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">고객의 동의를 받아 마이데이터사업자/정보수신자가 제3자에게 고객정보를 제공한 내역을 고객 본인이 조회할 수 있도록 지원하는 API</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="5">Body</td><td>org_code</td><td>기관코드</td><td>Y</td><td>aN(10)</td><td class="left">마이데이터사업자/정보수신자의 기관코드</td></tr>
+                        <tr><td>prov_consent_num</td><td>관리번호</td><td>Y</td><td>aN(50)</td><td class="left">동의내역 고유 관리번호 (지원-105에서 회신 받은 값)</td></tr>
+                        <tr><td>from_dtime</td><td>시작일시</td><td>Y</td><td>DTIME</td><td class="left">조회 시작 일시</td></tr>
+                        <tr><td>to_dtime</td><td>종료일시</td><td>Y</td><td>DTIME</td><td class="left">조회 종료 일시</td></tr>
+                        <tr><td>limit</td><td>최대조회갯수</td><td>Y</td><td>N(3)</td><td class="left">기준개체 이후 반환될 개체의 개수 (최대 500)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="12">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                        <tr><td>next_page</td><td>다음 페이지 기준개체</td><td>N</td><td>aNS(1000)</td><td class="left">다음 페이지 요청을 위한 기준개체 (마지막 페이지인 경우 미회신)</td></tr>
+                        <tr><td>prov_cnt</td><td>제공 내역 수</td><td>Y</td><td>N(10)</td><td class="left">제공 내역 수 (0인 경우 아래 항목 미회신)</td></tr>
+                        <tr><td>prov_list</td><td>제공 내역 목록</td><td>N</td><td>Object</td><td class="left"></td></tr>
+                        <tr><td class="indent-field">--snd_org_code</td><td>제공하는자(기관코드)</td><td>N</td><td>aN(10)</td><td class="left">고객의 동의를 받은 마이데이터사업자/정보수신자의 기관코드</td></tr>
+                        <tr><td class="indent-field">--prov_rcv_name</td><td>제공받는자</td><td>N</td><td>AH(200)</td><td class="left">고객 정보를 제공받는 제3자</td></tr>
+                        <tr><td class="indent-field">--prov_purpose</td><td>제공받는자의 이용목적</td><td>N</td><td>AH(1000)</td><td class="left">고객정보를 제공받는 제3자의 이용목적</td></tr>
+                        <tr><td class="indent-field">--prov_period</td><td>제공받는자의 보유 및 이용기간</td><td>N</td><td>AH(300)</td><td class="left">고객정보를 제공받는 제3자의 보유 및 이용 기간</td></tr>
+                        <tr><td class="indent-field">--prov_asset</td><td>제공받는자에게 제공한 항목</td><td>N</td><td>AH(5000)</td><td class="left">제3자에게 제공한 고객정보</td></tr>
+                        <tr><td class="indent-field">--is_reward</td><td>지급 대가 여부</td><td>N</td><td>Boolean</td><td class="left">제3자 제공을 통해 마이데이터사업자/정보수신자가 얻는 대가 여부</td></tr>
+                        <tr><td class="indent-field">--prov_dtime</td><td>제공 일시</td><td>N</td><td>DTIME</td><td class="left">고객정보를 제3자에게 제공한 일시</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ==================== 지원-107 v2: 개인(신용)정보 제3자 제공 동의 내역 철회 요청 ==================== -->
+            <div class="api-spec-card" id="support-107-v2">
+                <div class="api-spec-header">
+                    <h3 class="api-spec-title">개인(신용)정보 제3자 제공 동의 내역 철회 요청</h3>
+                    <div class="api-spec-meta">
+                        <span class="api-version-badge v2">v2</span>
+                        <span class="api-date">2025-09-30</span>
+                    </div>
+                </div>
+                <h4 class="api-sub-title">기본 정보</h4>
+                <table class="spec-table">
+                    <tbody>
+                        <tr><td class="info-label">API ID</td><td>지원-107</td><td class="info-label">HTTP Method</td><td><span class="method-badge post">POST</span></td></tr>
+                        <tr><td class="info-label">API 제공자</td><td>마이데이터사업자, 정보수신자</td><td class="info-label">API 요청자</td><td>종합포털</td></tr>
+                        <tr><td class="info-label">API 명 (URI)</td><td colspan="3"><code>/v2/mgmts/agreements/revoke</code></td></tr>
+                        <tr><td class="info-label">설명</td><td colspan="3">고객이 제3자 정보 제공 동의 한 내역을 철회할 수 있도록 지원하는 API<br>- 고객 요청 시 종합포털은 마이데이터사업자/정보수신자에게 고객정보와 동의내역 정보를 전달</td></tr>
+                        <tr><td class="info-label">기준시점</td><td>현재 시점</td><td class="info-label">Content-Type (요청)</td><td>application/json; charset=UTF-8</td></tr>
+                        <tr><td class="info-label">Content-Type (응답)</td><td colspan="3">application/json; charset=UTF-8</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">요청 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td rowspan="2">Header</td><td>Authorization</td><td>접근토큰</td><td>Y</td><td>aNS(1500)</td><td class="left">발급한 접근토큰</td></tr>
+                        <tr><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>org_code</td><td>기관코드</td><td>Y</td><td>aN(10)</td><td class="left">마이데이터사업자/정보수신자의 기관코드</td></tr>
+                        <tr><td>prov_consent_num</td><td>관리번호</td><td>Y</td><td>aN(50)</td><td class="left">동의내역 고유 관리번호 (지원-105, 106, 107에서 식별값으로 사용)</td></tr>
+                    </tbody>
+                </table>
+                <h4 class="api-sub-title">응답 메시지 명세</h4>
+                <table class="spec-table api-msg-table">
+                    <thead><tr><th style="width:8%">HTTP</th><th style="width:16%">항목명</th><th style="width:16%">항목설명</th><th style="width:5%">필수</th><th style="width:12%">타입(길이)</th><th>설명(비고)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Header</td><td>x-api-tran-id</td><td>거래고유번호</td><td>Y</td><td>AN(25)</td><td class="left">거래고유번호</td></tr>
+                        <tr><td rowspan="2">Body</td><td>rsp_code</td><td>세부 응답코드</td><td>Y</td><td>aN(5)</td><td class="left"></td></tr>
+                        <tr><td>rsp_msg</td><td>세부 응답메시지</td><td>Y</td><td>AH(450)</td><td class="left"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</main>
+</body>
+</html>
