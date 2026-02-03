@@ -31,8 +31,8 @@ public class SecurityConfig {
                         .requestMatchers("/member/login", "/member/signup/**", "/member/verify-email", "/member/resend-verification").permitAll()
                         
                         // 소개, API 가이드 페이지 허용
-                        .requestMatchers("/intro/**", "/api-guide/**", "/cert-api/**").permitAll()
-                        
+                        .requestMatchers("/intro/**", "/api-guide/**", "/cert-api/**", "/support-api/**").permitAll()
+
                         // 고객지원 - 인증 필요한 URL (구체적인 패턴 먼저!)
                         .requestMatchers("/support/inquiry/**").authenticated()
                         .requestMatchers("/support/board/write").authenticated()

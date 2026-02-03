@@ -476,6 +476,12 @@
     color: #0d6efd;
 }
 
+/* 중첩 필드 (하위 Object 항목 들여쓰기) */
+.api-msg-table td.indent-field {
+    padding-left: 20px;
+    color: #495057;
+}
+
 /* API 스펙 카드 반응형 */
 @media (max-width: 768px) {
     .api-spec-card {
