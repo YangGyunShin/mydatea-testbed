@@ -50,7 +50,7 @@ Password: (비워두기)
 | **API가이드** | 데이터 표준 API 기본/인증규격, 처리절차 | ✅ 완료 |
 | **인증 API 규격** | 개별인증 API (4개), 통합인증 API (9개) | ✅ 완료 |
 | **지원 API 규격** | 지원 API 종합포털 (14개), 사업자/정보제공자 (4개) | ✅ 완료 |
-| **정보제공 API 규격** | 정보제공 API 상세 스펙 | 🔄 진행 예정 |
+| **정보제공 API 규격** | 은행 업권 (31개 API) | 🔄 진행 중 |
 | **테스트베드** | API 테스트 환경 | ⏳ 예정 |
 | **적합성 심사** | 기능적합성/보안취약점 점검 | ⏳ 예정 |
 
@@ -83,7 +83,7 @@ Password: (비워두기)
 ```
 src/main/java/com/mydata/mydatatestbed/
 ├── config/          # SecurityConfig, WebConfig, AuditConfig
-├── controller/      # Main, Member, Support, ApiGuide, CertApi, SupportApi Controllers
+├── controller/      # Main, Member, Support, ApiGuide, CertApi, SupportApi, InfoApi Controllers
 ├── entity/          # Member, Notice, Faq, Inquiry, Resource, Board + enums
 ├── vo/              # Email, Password, Phone (Value Objects)
 ├── repository/      # JPA Repositories
@@ -102,7 +102,8 @@ src/main/resources/
 │   ├── support/     # 고객지원 (notice, faq, inquiry, resource, board)
 │   ├── api-guide/   # API가이드 (basic-spec, auth-spec, process-spec)
 │   ├── cert-api/    # 인증 API 규격 (individual-api, integrated-api)
-│   └── support-api/ # 지원 API 규격 (portal-api, provider-api)
+│   ├── support-api/ # 지원 API 규격 (portal-api, provider-api)
+│   └── info-api/    # 정보제공 API 규격 (bank-api 등 업권별)
 ├── static/          # CSS, JS, Images
 ├── application.yml  # 설정
 └── data.sql         # 초기 데이터 (FAQ, Resource)
@@ -134,6 +135,7 @@ src/main/resources/
 | `/cert-api/integrated` | 통합인증 API (9개 API 스펙) |
 | `/support-api/portal` | 지원 API - 종합포털 제공 (14개 API 스펙) |
 | `/support-api/provider` | 지원 API - 사업자/정보제공자 제공 (4개 API 스펙) |
+| `/info-api/bank` | 은행 업권 정보제공 API 규격 (31개 API 스펙) |
 
 ### 인증 필요 URL
 
@@ -152,7 +154,7 @@ src/main/resources/
 Phase 1: 기본 구조      [██████████] 100% ✅
 Phase 2: 회원 기능      [██████████] 100% ✅
 Phase 3: 게시판 기능    [██████████] 100% ✅
-Phase 4: 핵심 기능      [██████░░░░]  55% 🔄
+Phase 4: 핵심 기능      [███████░░░]  65% 🔄
 Phase 5: 완성도         [░░░░░░░░░░]   0% ⏳
 ```
 
